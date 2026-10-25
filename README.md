@@ -100,10 +100,10 @@ Proyek ini belum memiliki konfigurasi yang dapat dijalankan, sehingga instruksi 
 
 | No | Nama | NIM | Peran |
 |---|---|---|---|
-| 1 | _Nama Anggota 1_ | _NIM_ | _Peran_ |
-| 2 | _Nama Anggota 2_ | _NIM_ | _Peran_ |
-| 3 | _Nama Anggota 3_ | _NIM_ | _Peran_ |
-| 4 | _Nama Anggota 4_ | _NIM_ | _Peran_ |
+| 1 | _M. FHADY MAHZYB ZAMACHYIAR_ | _1512626026_ | _Membuat flowchart dan alur penggunaan aplikasi_ |
+| 2 | _CLARESTA ARDIYANTI TSANY_ | _1521426048_ | _Menyusun narasi konsep, dokumentasi, dan laporan_ |
+| 3 | _NADYA SYAQILLA PUTRI HERYADI_ | _1526426025_ | _Membuat desain UI/UX_ |
+| 4 | _BRURYANSAH_ | _1512626004_ | _Membuat website dan mengintegrasikan desain_ |
 
 ---
 
