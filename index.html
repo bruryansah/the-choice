@@ -1,1008 +1,803 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wireframe - Simulasi Interaktif Pancasila</title>
-    <!-- Audio YouTube Tersembunyi (Autoplay & Loop) -->
-    <style>
-      /* RESET & BASE WIREFRAME STYLES */
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: "Courier New", Courier, monospace;
-      }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wireframe - Simulasi Interaktif Pancasila</title>
+  <style>
+    /* RESET & BASE WIREFRAME STYLES */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
+    }
 
+    body {
+      background-color: #e0e0e0;
+      color: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* CONTAINER PER-PAGE (TAMPILAN SATU BINGKAI) */
+    .app-container {
+      width: 900px;
+      height: 550px;
+      border: 3px solid #000;
+      background-color: #fff;
+      position: relative;
+      box-shadow: 6px 6px 0px #888;
+      overflow: hidden;
+    }
+
+    /* SISTEM NAVIGATION PAGE (PER-PAGE HIDE/SHOW) */
+    .page {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      flex-direction: column;
+      background: #fff;
+    }
+
+    .page.active {
+      display: flex;
+    }
+
+    /* COMMON COMPONENTS */
+    .navbar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 20px;
+      padding: 15px 30px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      border-bottom: 2px dashed #000;
+      background: #fafafa;
+    }
+
+    .nav-link {
+      cursor: pointer;
+      padding: 2px 6px;
+      border: 1px solid transparent;
+    }
+
+    .nav-link:hover {
+      border: 1px solid #000;
+      background: #eee;
+    }
+
+    .btn-wireframe {
+      border: 2px solid #000;
+      background: #fff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-block;
+      text-align: center;
+      user-select: none;
+    }
+
+    .btn-wireframe:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      width: 35px;
+      height: 30px;
+      border: 2px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      background: #fff;
+      z-index: 10;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      background: #ddd;
+    }
+
+    .img-placeholder {
+      background: #e0e0e0;
+      border: 2px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .box-dashed {
+      border: 2px dashed #666;
+      padding: 10px;
+      background: #fafafa;
+    }
+
+    .center-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 15px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* 1. HOME / BERANDA */
+    .hero-body {
+      display: flex;
+      flex: 1;
+      padding: 20px 40px;
+    }
+    .hero-left {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 15px;
+    }
+    .hero-title-box {
+      border: 2px solid #000;
+      padding: 10px;
+      font-weight: bold;
+      font-size: 1.8rem;
+      text-align: center;
+    }
+    .subtitle-box {
+      border: 2px solid #000;
+      padding: 5px 15px;
+      display: inline-block;
+      width: fit-content;
+      border-radius: 15px;
+      font-weight: bold;
+    }
+    .hero-right {
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 2. MODAL NAMA & POPUP */
+    .modal-window {
+      width: 420px;
+      border: 2px solid #000;
+      border-radius: 12px;
+      background: #fff;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+    }
+    .modal-header-dots {
+      width: 100%;
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 8px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid #000;
+    }
+    .input-field {
+      width: 80%;
+      padding: 10px;
+      border: 2px dashed #000;
+      border-radius: 20px;
+      text-align: center;
+      outline: none;
+      font-family: inherit;
+    }
+
+    /* 3. PILIH SKENARIO */
+    .scenario-grid {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 15px;
+    }
+    .scenario-card {
+      width: 230px;
+      border: 2px solid #000;
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      background: #fff;
+      cursor: pointer;
+    }
+    .scenario-card:hover {
+      background: #f0f0f0;
+      border-width: 3px;
+    }
+
+    /* 4. SKENARIO DETAIL */
+    .scenario-detail {
+      display: flex;
+      gap: 20px;
+      padding: 15px 30px;
+      align-items: center;
+    }
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 0 30px 20px;
+    }
+    .option-btn {
+      border: 2px solid #000;
+      padding: 12px;
+      border-radius: 20px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+      background: #fff;
+      cursor: pointer;
+    }
+    .option-btn:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    /* 5. ENDING PAGES */
+    .ending-container {
+      display: flex;
+      padding: 20px;
+      gap: 20px;
+      height: 100%;
+      align-items: center;
+    }
+    .ending-left {
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .ending-right {
+      width: 60%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      text-align: center;
+    }
+
+    /* ========================================== */
+    /* RESPONSIVE MEDIA QUERY UNTUK MOBILE (HP) */
+    /* ========================================== */
+    @media screen and (max-width: 768px) {
       body {
-        background-color: #e0e0e0;
-        color: #111;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        padding: 20px;
+        padding: 10px;
       }
-
-      /* CONTAINER PER-PAGE (TAMPILAN SATU BINGKAI) */
       .app-container {
-        width: 900px;
-        height: 550px;
-        border: 3px solid #000;
-        background-color: #fff;
-        position: relative;
-        box-shadow: 6px 6px 0px #888;
-        overflow: hidden;
-      }
-
-      /* SISTEM NAVIGATION PAGE (PER-PAGE HIDE/SHOW) */
-      .page {
-        display: none;
         width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        flex-direction: column;
-        background: #fff;
+        height: 100vh;
+        max-height: 650px;
       }
-
-      .page.active {
-        display: flex;
-      }
-
-      /* COMMON COMPONENTS */
       .navbar {
-        display: flex;
-        justify-content: flex-end;
-        gap: 20px;
-        padding: 15px 30px;
-        font-weight: bold;
-        font-size: 0.9rem;
-        border-bottom: 2px dashed #000;
-        background: #fafafa;
+        padding: 10px 15px;
+        gap: 10px;
+        font-size: 0.75rem;
       }
-
-      .nav-link {
-        cursor: pointer;
-        padding: 2px 6px;
-        border: 1px solid transparent;
-      }
-
-      .nav-link:hover {
-        border: 1px solid #000;
-        background: #eee;
-      }
-
-      .btn-wireframe {
-        border: 2px solid #000;
-        background: #fff;
-        padding: 8px 20px;
-        border-radius: 20px;
-        font-weight: bold;
-        cursor: pointer;
-        display: inline-block;
-        text-align: center;
-        user-select: none;
-      }
-
-      .btn-wireframe:hover {
-        background: #000;
-        color: #fff;
-      }
-
-      .back-btn {
-        position: absolute;
-        top: 15px;
-        left: 15px;
-        width: 35px;
-        height: 30px;
-        border: 2px solid #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        background: #fff;
-        z-index: 10;
-        cursor: pointer;
-      }
-
-      .back-btn:hover {
-        background: #ddd;
-      }
-
-      .img-placeholder {
-        background: #e0e0e0;
-        border: 2px solid #000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #555;
-        font-size: 0.85rem;
-        text-align: center;
-        padding: 10px;
-      }
-
-      .box-dashed {
-        border: 2px dashed #666;
-        padding: 10px;
-        background: #fafafa;
-      }
-
-      .center-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        gap: 15px;
-        padding: 20px;
-        text-align: center;
-      }
-
-      /* 1. HOME / BERANDA */
       .hero-body {
-        display: flex;
-        flex: 1;
-        padding: 20px 40px;
-      }
-      .hero-left {
-        width: 50%;
-        display: flex;
         flex-direction: column;
-        justify-content: center;
-        gap: 15px;
+        padding: 10px 20px;
       }
-      .hero-title-box {
-        border: 2px solid #000;
-        padding: 10px;
-        font-weight: bold;
-        font-size: 1.8rem;
-        text-align: center;
-      }
-      .subtitle-box {
-        border: 2px solid #000;
-        padding: 5px 15px;
-        display: inline-block;
-        width: fit-content;
-        border-radius: 15px;
-        font-weight: bold;
+      .hero-left, .hero-right {
+        width: 100%;
       }
       .hero-right {
-        width: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: none; /* Menyembunyikan ilustrasi di mobile agar muat */
       }
-
-      /* 2. MODAL NAMA & POPUP */
+      .hero-title-box {
+        font-size: 1.4rem;
+      }
       .modal-window {
-        width: 420px;
-        border: 2px solid #000;
-        border-radius: 12px;
-        background: #fff;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        align-items: center;
+        width: 90%;
+        padding: 15px;
       }
-      .modal-header-dots {
-        width: 100%;
-        display: flex;
-        gap: 6px;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 8px;
-      }
-      .dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        border: 1px solid #000;
-      }
-      .input-field {
-        width: 80%;
-        padding: 10px;
-        border: 2px dashed #000;
-        border-radius: 20px;
-        text-align: center;
-        outline: none;
-        font-family: inherit;
-      }
-
-      /* 3. PILIH SKENARIO */
       .scenario-grid {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        margin-top: 15px;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        overflow-y: auto;
+        max-height: 350px;
       }
       .scenario-card {
-        width: 230px;
-        border: 2px solid #000;
-        border-radius: 10px;
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-        background: #fff;
-        cursor: pointer;
+        width: 90%;
+        flex-direction: row;
+        height: 60px;
+        padding: 5px;
       }
-      .scenario-card:hover {
-        background: #f0f0f0;
-        border-width: 3px;
+      .scenario-card .img-placeholder {
+        width: 60px !important;
+        height: 100% !important;
+        font-size: 0.5rem;
       }
-
-      /* 4. SKENARIO DETAIL */
       .scenario-detail {
-        display: flex;
-        gap: 20px;
-        padding: 15px 30px;
-        align-items: center;
+        flex-direction: column;
+        padding: 10px 15px;
+        gap: 10px;
+      }
+      .scenario-detail .img-placeholder {
+        width: 100% !important;
+        height: 80px !important;
+      }
+      .scenario-detail .box-dashed {
+        width: 100% !important;
+        height: 90px !important;
+        font-size: 0.65rem;
       }
       .options-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        padding: 0 30px 20px;
+        padding: 0 15px 10px;
+        gap: 6px;
       }
       .option-btn {
-        border: 2px solid #000;
-        padding: 12px;
-        border-radius: 20px;
-        text-align: center;
-        font-size: 0.8rem;
-        font-weight: bold;
-        background: #fff;
-        cursor: pointer;
+        padding: 8px;
+        font-size: 0.7rem;
       }
-      .option-btn:hover {
-        background: #000;
-        color: #fff;
-      }
-
-      /* 5. ENDING PAGES */
       .ending-container {
-        display: flex;
-        padding: 20px;
-        gap: 20px;
-        height: 100%;
-        align-items: center;
-      }
-      .ending-left {
-        width: 40%;
-        display: flex;
         flex-direction: column;
+        padding: 10px;
         gap: 10px;
       }
-      .ending-right {
-        width: 60%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 15px;
-        text-align: center;
+      .ending-left {
+        width: 100%;
+        flex-direction: row;
+        gap: 10px;
       }
-    </style>
-  </head>
-  <body>
-    <!-- Audio YouTube Tersembunyi (Autoplay & Loop) -->
-    <div class="app-container">
-      <div
-        style="
-          position: fixed;
-          bottom: 20px;
-          right: 20px;
-          z-index: 9999;
-          background: #fff;
-          border: 2px solid #000;
-          padding: 10px 15px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          box-shadow: 3px 3px 0px #000;
-        "
-      >
-        <span style="font-weight: bold; font-size: 0.85rem">🎵 Musik:</span>
-        <button
-          id="music-btn"
-          onclick="toggleLocalMusic()"
-          class="btn-wireframe"
-          style="padding: 4px 12px; font-size: 0.8rem"
-        >
-          ▶ Play
-        </button>
+      .ending-left .img-placeholder {
+        height: 70px !important;
+        width: 40%;
+      }
+      .ending-left .box-dashed {
+        font-size: 0.55rem;
+        width: 60%;
+      }
+      .ending-right {
+        width: 100%;
+        gap: 8px;
+      }
+      .ending-right h1 {
+        font-size: 1.5rem !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- PAGE 1: BERANDA / HOME -->
+    <div id="page-home" class="page active">
+      <div class="navbar">
+        <span class="nav-link" onclick="navigateTo('page-home')">BERANDA</span>
+        <span class="nav-link" onclick="navigateTo('page-tentang')">TENTANG</span>
+        <span class="nav-link" onclick="navigateTo('page-panduan')">PANDUAN</span>
       </div>
-
-      <!-- PAGE 1: BERANDA / HOME -->
-      <div id="page-home" class="page active">
-        <div class="navbar">
-          <span class="nav-link" onclick="navigateTo('page-home')"
-            >BERANDA</span
-          >
-          <span class="nav-link" onclick="navigateTo('page-tentang')"
-            >TENTANG</span
-          >
-          <span class="nav-link" onclick="navigateTo('page-panduan')"
-            >PANDUAN</span
-          >
-        </div>
-        <div class="hero-body">
-          <div class="hero-left">
-            <div class="hero-title-box">PANCASILA</div>
-            <div class="subtitle-box">THE CHOICE</div>
-            <div
-              class="box-dashed"
-              style="font-size: 0.85rem; line-height: 1.4"
-            >
-              Sebuah simulasi interaktif untuk melatih penerapan nilai-nilai
-              Pancasila dalam kehidupan sehari-hari
-            </div>
-            <div>
-              <div class="btn-wireframe" onclick="navigateTo('page-nama')">
-                Mulai
-              </div>
-            </div>
+      <div class="hero-body">
+        <div class="hero-left">
+          <div class="hero-title-box">PANCASILA</div>
+          <div class="subtitle-box">THE CHOICE</div>
+          <div class="box-dashed" style="font-size: 0.85rem; line-height: 1.4;">
+            Sebuah simulasi interaktif untuk melatih penerapan nilai-nilai Pancasila dalam kehidupan sehari-hari
           </div>
-          <div class="hero-right">
-            <div class="img-placeholder" style="width: 85%; height: 80%">
-              [ ILUSTRASI HERO / KARAKTER ]
-            </div>
+          <div>
+            <div class="btn-wireframe" onclick="navigateTo('page-nama')">Mulai</div>
           </div>
         </div>
-      </div>
-
-      <!-- PAGE: TENTANG -->
-      <div id="page-tentang" class="page">
-        <div class="navbar">
-          <span class="nav-link" onclick="navigateTo('page-home')"
-            >BERANDA</span
-          >
-          <span class="nav-link" onclick="navigateTo('page-tentang')"
-            >TENTANG</span
-          >
-          <span class="nav-link" onclick="navigateTo('page-panduan')"
-            >PANDUAN</span
-          >
-        </div>
-        <div class="center-content">
-          <h2>TENTANG SIMULASI</h2>
-          <div
-            class="box-dashed"
-            style="
-              width: 80%;
-              font-size: 0.9rem;
-              text-align: left;
-              line-height: 1.6;
-            "
-          >
-            <strong>Pancasila: The Choice</strong> adalah media pembelajaran
-            interaktif berbasis skenario kasus kehidupan nyata.<br /><br />
-            Aplikasi ini bertujuan untuk menguji pemahaman pengguna mengenai
-            pengamalan Sila Pancasila dalam menyelesaikan masalah sosial seperti
-            perundungan, perbedaan pendapat, dan penyebaran informasi.
-          </div>
-          <div class="btn-wireframe" onclick="navigateTo('page-home')">
-            Kembali ke Beranda
-          </div>
-        </div>
-      </div>
-
-      <!-- PAGE: PANDUAN -->
-      <div id="page-panduan" class="page">
-        <div class="navbar">
-          <span class="nav-link" onclick="navigateTo('page-home')"
-            >BERANDA</span
-          >
-          <span class="nav-link" onclick="navigateTo('page-tentang')"
-            >TENTANG</span
-          >
-          <span class="nav-link" onclick="navigateTo('page-panduan')"
-            >PANDUAN</span
-          >
-        </div>
-        <div class="center-content">
-          <h2>PANDUAN PENGGUNAAN</h2>
-          <div
-            class="box-dashed"
-            style="
-              width: 80%;
-              font-size: 0.85rem;
-              text-align: left;
-              line-height: 1.6;
-            "
-          >
-            1. Masukkan nama panggilanmu pada halaman awal.<br />
-            2. Pilih salah satu skenario kasus yang ingin kamu selesaikan.<br />
-            3. Baca jalan cerita dengan seksama.<br />
-            4. Pilih Opsi (A, B, atau C) sesuai dengan tindakan yang menurutmu
-            paling tepat.<br />
-            5. Lihat evaluasi hasil dan pengamalan Sila Pancasila dari
-            pilihanmu!
-          </div>
-          <div class="btn-wireframe" onclick="navigateTo('page-home')">
-            Kembali ke Beranda
-          </div>
-        </div>
-      </div>
-
-      <!-- PAGE 2: MASUKKAN NAMA -->
-      <div id="page-nama" class="page">
-        <div class="back-btn" onclick="navigateTo('page-home')">&lt;</div>
-        <div class="center-content">
-          <h2>MASUKKAN NAMAMU!</h2>
-          <div class="modal-window">
-            <div class="modal-header-dots">
-              <div class="dot"></div>
-              <div class="dot"></div>
-              <div class="dot"></div>
-            </div>
-            <input
-              type="text"
-              class="input-field"
-              placeholder="Ketik nama di sini..."
-              value="User"
-            />
-            <div class="btn-wireframe" onclick="navigateTo('page-skenario')">
-              Lanjut!
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PAGE 3: PILIH SKENARIO -->
-      <div id="page-skenario" class="page">
-        <div class="back-btn" onclick="navigateTo('page-nama')">&lt;</div>
-        <div
-          class="center-content"
-          style="justify-content: flex-start; padding-top: 30px"
-        >
-        <br>
-        <br>
-        <br>
-          <h2>PILIH SKENARIO</h2>
-          <p style="font-size: 0.8rem">PILIH SATU KASUS UNTUK DISELESAIKAN</p>
-
-          <div class="scenario-grid">
-            <!-- Card 1: Perundungan -->
-            <div
-              class="scenario-card"
-              onclick="navigateTo('page-detail-skenario-1')"
-            >
-              <div class="img-placeholder" style="width: 100%; height: 130px">
-                [ Kasus 1: Perundungan ]
-              </div>
-              <div
-                style="font-size: 0.7rem; font-weight: bold; text-align: center"
-              >
-                PERUNDUNGAN DI LINGKUNGAN KAMPUS
-              </div>
-            </div>
-            <!-- Card 2: Perbedaan Pendapat -->
-            <div
-              class="scenario-card"
-              onclick="navigateTo('page-detail-skenario-2')"
-            >
-              <div class="img-placeholder" style="width: 100%; height: 130px">
-                [ Kasus 2: Pendapat ]
-              </div>
-              <div
-                style="font-size: 0.7rem; font-weight: bold; text-align: center"
-              >
-                PERBEDAAN PENDAPAT DALAM KELOMPOK
-              </div>
-            </div>
-            <!-- Card 3: Berita Belum Terverifikasi -->
-            <div
-              class="scenario-card"
-              onclick="navigateTo('page-detail-skenario-3')"
-            >
-              <div class="img-placeholder" style="width: 100%; height: 130px">
-                [ Kasus 3: Berita ]
-              </div>
-              <div
-                style="font-size: 0.7rem; font-weight: bold; text-align: center"
-              >
-                BERITA YANG BELUM TERVERIFIKASI
-              </div>
-            </div>
-          </div>
-
-          <div style="margin-top: 20px; font-size: 1.2rem">★ ★ ★</div>
-        </div>
-      </div>
-
-      <!-- ========================================== -->
-      <!-- SKENARIO 1: PERUNDUNGAN DI LINGKUNGAN KAMPUS -->
-      <!-- ========================================== -->
-      <div id="page-detail-skenario-1" class="page">
-        <br>
-        <br>
-        <br>
-        <br>
-        <div class="back-btn" onclick="navigateTo('page-skenario')">&lt;</div>
-        <h3 style="text-align: center; margin-top: 20px; font-size: 1rem">
-          PERUNDUNGAN DI LINGKUNGAN KAMPUS
-        </h3>
-        <div class="scenario-detail">
-          <div class="img-placeholder" style="width: 35%; height: 150px">
-            [ Gambar Perundungan ]
-          </div>
-          <div
-            class="box-dashed"
-            style="
-              width: 65%;
-              height: 150px;
-              font-size: 0.75rem;
-              text-align: left;
-              overflow-y: auto;
-            "
-          >
-            Saat berjalan menuju kelas, kamu melihat seorang mahasiswa sedang
-            duduk sendirian sambil membaca buku. Beberapa mahasiswa lain
-            menghampirinya dan mulai mengejek penampilannya serta menertawakan
-            cara bicaranya.<br /><br />Apa yang akan kamu lakukan?
-          </div>
-        </div>
-        <div class="options-container">
-          <div class="option-btn" onclick="navigateTo('page-bad-ending-1')">
-            OPSI A: Ikut tertawa dan mengejek agar diterima oleh kelompok
-            tersebut.
-          </div>
-          <div class="option-btn" onclick="navigateTo('page-good-ending-1')">
-            OPSI B: Menegur para pelaku dan membela mahasiswa yang dirundung.
-          </div>
-          <div class="option-btn" onclick="navigateTo('page-neutral-ending-1')">
-            OPSI C: Memilih pergi karena merasa kejadian itu bukan urusanmu.
-          </div>
-        </div>
-      </div>
-
-      <!-- Ending Skenario 1 -->
-      <div id="page-bad-ending-1" class="page">
-        <div class="back-btn" onclick="navigateTo('page-detail-skenario-1')">
-          &lt;
-        </div>
-        <div class="ending-container">
-          <div class="ending-left">
-            <div class="img-placeholder" style="height: 180px">[ Opsi A ]</div>
-            <div class="box-dashed" style="font-size: 0.65rem">
-              BERTENTANGAN DENGAN SILA KE-2 KARENA TIDAK MENGHORMATI MARTABAT
-              ORANG LAIN.
-            </div>
-          </div>
-          <div class="ending-right">
-            <div style="font-weight: bold; font-size: 0.95rem">
-              KAMU IKUT MENGEJEK KORBAN.
-            </div>
-            <div class="box-dashed" style="font-size: 0.75rem">
-              Tindakanmu memperburuk kondisi korban dan membuat perundungan
-              semakin dinormalisasi.
-            </div>
-            <h1 style="font-size: 2rem">BAD ENDING...</h1>
-            <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">
-              Lanjut &gt;
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="page-good-ending-1" class="page">
-        <div class="back-btn" onclick="navigateTo('page-detail-skenario-1')">
-          &lt;
-        </div>
-        <div class="ending-container">
-          <div class="ending-left">
-            <div class="img-placeholder" style="height: 180px">[ Opsi B ]</div>
-            <div class="box-dashed" style="font-size: 0.65rem">
-              MENCERMINKAN SILA KE-2 MELALUI SIKAP BERADAB DAN TENGGANG RASA.
-            </div>
-          </div>
-          <div class="ending-right">
-            <div style="font-weight: bold; font-size: 0.95rem">
-              KAMU MEMBELA MAHASISWA YANG DIRUNDUNG.
-            </div>
-            <div class="box-dashed" style="font-size: 0.75rem">
-              Kamu berani menghentikan perundungan dan membantu menciptakan
-              lingkungan kampus yang aman.
-            </div>
-            <h1 style="font-size: 2rem">GOOD ENDING!</h1>
-            <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">
-              Lanjut &gt;
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="page-neutral-ending-1" class="page">
-        <div class="back-btn" onclick="navigateTo('page-detail-skenario-1')">
-          &lt;
-        </div>
-        <div class="ending-container">
-          <div class="ending-left">
-            <div class="img-placeholder" style="height: 180px">[ Opsi C ]</div>
-            <div class="box-dashed" style="font-size: 0.65rem">
-              BELUM MENUNJUKKAN PENGAMALAN AKTIF SILA KE-2.
-            </div>
-          </div>
-          <div class="ending-right">
-            <div style="font-weight: bold; font-size: 0.95rem">
-              KAMU MEMILIH PERGI.
-            </div>
-            <div class="box-dashed" style="font-size: 0.75rem">
-              Kamu tidak ikut melakukan perundungan, tetapi tidak berusaha
-              membantu korban.
-            </div>
-            <h1 style="font-size: 2rem">NEUTRAL ENDING</h1>
-            <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">
-              Lanjut &gt;
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========================================== -->
-      <!-- SKENARIO 2: PERBEDAAN PENDAPAT DALAM KELOMPOK -->
-      <!-- ========================================== -->
-      <div id="page-detail-skenario-2" class="page">
-        <br>
-        <br>
-        <br>
-        <br>
-        <div class="back-btn" onclick="navigateTo('page-skenario')">&lt;</div>
-        <h3 style="text-align: center; margin-top: 20px; font-size: 1rem">
-          PERBEDAAN PENDAPAT DALAM KELOMPOK
-        </h3>
-        <div class="scenario-detail">
-          <div class="img-placeholder" style="width: 35%; height: 150px">
-            [ Gambar Diskusi ]
-          </div>
-          <div
-            class="box-dashed"
-            style="
-              width: 65%;
-              height: 150px;
-              font-size: 0.75rem;
-              text-align: left;
-              overflow-y: auto;
-            "
-          >
-            Kamu sedang mengerjakan tugas bersama empat teman. Ketua kelompok
-            bersikeras menggunakan idenya sendiri dan menolak pendapat anggota
-            lain. Suasana diskusi memanas. Apa yang akan kamu lakukan?
-          </div>
-        </div>
-        <div class="options-container">
-          <div class="option-btn" onclick="navigateTo('page-neutral-ending-2')">
-            OPSI A: Mengikuti saja keputusan ketua agar diskusi cepat selesai.
-          </div>
-          <div class="option-btn" onclick="navigateTo('page-good-ending-2')">
-            OPSI B: Mengajak seluruh anggota berdiskusi dan mencari keputusan
-            bersama.
-          </div>
-          <div class="option-btn" onclick="navigateTo('page-bad-ending-2')">
-            OPSI C: Memaksakan ide sendiri karena merasa pendapatmu paling
-            benar.
-          </div>
-        </div>
-      </div>
-
-      <!-- Ending Skenario 2 -->
-      <div id="page-neutral-ending-2" class="page">
-        <div class="back-btn" onclick="navigateTo('page-detail-skenario-2')">
-          &lt;
-        </div>
-        <div class="ending-container">
-          <div class="ending-left">
-            <div class="img-placeholder" style="height: 180px">[ Opsi A ]</div>
-            <div class="box-dashed" style="font-size: 0.65rem">
-              BELUM MENCERMINKAN SILA KE-4 SECARA OPTIMAL (MENGABAIKAN
-              MUSYAWARAH).
-            </div>
-          </div>
-          <div class="ending-right">
-            <div style="font-weight: bold; font-size: 0.95rem">
-              KAMU MENGIKUTI KEPUTUSAN KETUA.
-            </div>
-            <div class="box-dashed" style="font-size: 0.75rem">
-              Diskusi cepat selesai, tetapi keputusan tidak melibatkan seluruh
-              anggota.
-            </div>
-            <h1 style="font-size: 2rem">NEUTRAL ENDING</h1>
-            <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">
-              Lanjut &gt;
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="page-good-ending-2" class="page">
-        <div class="back-btn" onclick="navigateTo('page-detail-skenario-2')">
-          &lt;
-        </div>
-        <div class="ending-container">
-          <div class="ending-left">
-            <div class="img-placeholder" style="height: 180px">[ Opsi B ]</div>
-            <div class="box-dashed" style="font-size: 0.65rem">
-              MENCERMINKAN SILA KE-4 MELALUI MUSYAWARAH DAN KEPENTINGAN BERSAMA.
-            </div>
-          </div>
-          <div class="ending-right">
-            <div style="font-weight: bold; font-size: 0.95rem">
-              KAMU MENGAJAK ANGGOTA BERDISKUSI.
-            </div>
-            <div class="box-dashed" style="font-size: 0.75rem">
-              Kelompok mempertimbangkan berbagai ide dan mencapai kesepakatan
-              bersama.
-            </div>
-            <h1 style="font-size: 2rem">GOOD ENDING!</h1>
-            <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">
-              Lanjut &gt;
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="page-bad-ending-2" class="page">
-        <div class="back-btn" onclick="navigateTo('page-detail-skenario-2')">
-          &lt;
-        </div>
-        <div class="ending-container">
-          <div class="ending-left">
-            <div class="img-placeholder" style="height: 180px">[ Opsi C ]</div>
-            <div class="box-dashed" style="font-size: 0.65rem">
-              BERTENTANGAN DENGAN SILA KE-4 (MENGABAIKAN PRINSIP MUSYAWARAH).
-            </div>
-          </div>
-          <div class="ending-right">
-            <div style="font-weight: bold; font-size: 0.95rem">
-              KAMU MEMAKSAKAN IDE SENDIRI.
-            </div>
-            <div class="box-dashed" style="font-size: 0.75rem">
-              Diskusi berubah menjadi konflik dan kerja sama kelompok terganggu.
-            </div>
-            <h1 style="font-size: 2rem">BAD ENDING..</h1>
-            <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">
-              Lanjut &gt;
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========================================== -->
-      <!-- SKENARIO 3: BERITA YANG BELUM TERVERIFIKASI -->
-      <!-- ========================================== -->
-      <div id="page-detail-skenario-3" class="page">
-        <br>
-        <br>
-        <br>
-        <br>
-        <div class="back-btn" onclick="navigateTo('page-skenario')">&lt;</div>
-        <h3 style="text-align: center; margin-top: 20px; font-size: 1rem">
-          BERITA YANG BELUM TERVERIFIKASI
-        </h3>
-        <div class="scenario-detail">
-          <div class="img-placeholder" style="width: 35%; height: 150px">
-            [ Gambar Hoax ]
-          </div>
-          <div
-            class="box-dashed"
-            style="
-              width: 65%;
-              height: 150px;
-              font-size: 0.75rem;
-              text-align: left;
-              overflow-y: auto;
-            "
-          >
-            Kamu menerima pesan berantai di grup mahasiswa berisi kabar bahwa
-            salah satu dosen melakukan tindakan tidak pantas tanpa sumber yang
-            jelas. Temanmu mulai membagikannya. Apa yang akan kamu lakukan?
-          </div>
-        </div>
-        <div class="options-container">
-          <div class="option-btn" onclick="navigateTo('page-bad-ending-3')">
-            OPSI A: Langsung membagikan berita tersebut agar semakin banyak
-            orang tahu.
-          </div>
-          <div class="option-btn" onclick="navigateTo('page-good-ending-3')">
-            OPSI B: Memeriksa kebenaran informasi melalui sumber resmi sebelum
-            percaya.
-          </div>
-          <div class="option-btn" onclick="navigateTo('page-neutral-ending-3')">
-            OPSI C: Mengabaikan berita tersebut tanpa mencari tahu kebenarannya.
-          </div>
-        </div>
-      </div>
-
-      <!-- Ending Skenario 3 -->
-      <div id="page-bad-ending-3" class="page">
-        <div class="back-btn" onclick="navigateTo('page-detail-skenario-3')">
-          &lt;
-        </div>
-        <div class="ending-container">
-          <div class="ending-left">
-            <div class="img-placeholder" style="height: 180px">[ Opsi A ]</div>
-            <div class="box-dashed" style="font-size: 0.65rem">
-              BERTENTANGAN DENGAN SILA KE-2 DAN KE-4 (MENYEBARKAN INFO TANPA
-              PERTIMBANGAN).
-            </div>
-          </div>
-          <div class="ending-right">
-            <div style="font-weight: bold; font-size: 0.95rem">
-              MENYEBARKAN BERITA TANPA VERIFIKASI.
-            </div>
-            <div class="box-dashed" style="font-size: 0.75rem">
-              Nama baik dosen tercemar dan menimbulkan kesalahpahaman di kampus.
-            </div>
-            <h1 style="font-size: 2rem">BAD ENDING..</h1>
-            <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">
-              Lanjut &gt;
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="page-good-ending-3" class="page">
-        <div class="back-btn" onclick="navigateTo('page-detail-skenario-3')">
-          &lt;
-        </div>
-        <div class="ending-container">
-          <div class="ending-left">
-            <div class="img-placeholder" style="height: 180px">[ Opsi B ]</div>
-            <div class="box-dashed" style="font-size: 0.65rem">
-              MENCERMINKAN SILA KE-2 DAN KE-4 (KEBIJAKSANAAN MEMPERTIMBANGKAN
-              INFORMASI).
-            </div>
-          </div>
-          <div class="ending-right">
-            <div style="font-weight: bold; font-size: 0.95rem">
-              MEMERIKSA KEBENARAN INFORMASI TERLEBIH DAHULU.
-            </div>
-            <div class="box-dashed" style="font-size: 0.75rem">
-              Penyebaran informasi yang menyesatkan dapat dicegah dan kamu
-              mengingatkan teman.
-            </div>
-            <h1 style="font-size: 2rem">GOOD ENDING!</h1>
-            <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">
-              Lanjut &gt;
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="page-neutral-ending-3" class="page">
-        <div class="back-btn" onclick="navigateTo('page-detail-skenario-3')">
-          &lt;
-        </div>
-        <div class="ending-container">
-          <div class="ending-left">
-            <div class="img-placeholder" style="height: 180px">[ Opsi C ]</div>
-            <div class="box-dashed" style="font-size: 0.65rem">
-              BELUM MENUNJUKKAN KEPEDULIAN AKTIF DAN TANGGUNG JAWAB INFORMASI.
-            </div>
-          </div>
-          <div class="ending-right">
-            <div style="font-weight: bold; font-size: 0.95rem">
-              MENGABAIKAN BERITA TANPA MENCARI TAHU.
-            </div>
-            <div class="box-dashed" style="font-size: 0.75rem">
-              Informasi belum terverifikasi tetap beredar karena tidak ada upaya
-              meluruskan.
-            </div>
-            <h1 style="font-size: 2rem">NEUTRAL ENDING</h1>
-            <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">
-              Lanjut &gt;
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- COMMON POPUP & TERIMA KASIH -->
-      <!-- PAGE 6: POPUP / PILIHAN SETELAH ENDING -->
-      <div id="page-popup-next" class="page">
-        <div class="back-btn" onclick="navigateTo('page-skenario')">&lt;</div>
-        <div class="center-content">
-          <div class="modal-window">
-            <div class="modal-header-dots">
-              <div class="dot"></div>
-              <div class="dot"></div>
-              <div class="dot"></div>
-            </div>
-            <h3 style="margin: 10px 0">INGIN MENCOBA SKENARIO LAIN?</h3>
-            <div style="display: flex; gap: 15px">
-              <div class="btn-wireframe" onclick="navigateTo('page-skenario')">
-                PILIH SKENARIO
-              </div>
-              <div
-                class="btn-wireframe"
-                onclick="navigateTo('page-terima-kasih')"
-              >
-                AKHIRI
-              </div>
-            </div>
-          </div>
-          <div style="margin-top: 10px; font-size: 1.2rem">★ ★ ★</div>
-        </div>
-      </div>
-
-      <!-- PAGE 7: TERIMA KASIH (HALAMAN PALING AKHIR) -->
-      <div id="page-terima-kasih" class="page">
-        <div class="navbar">
-          <span class="nav-link" onclick="navigateTo('page-home')"
-            >BERANDA</span
-          >
-          <span class="nav-link" onclick="navigateTo('page-tentang')"
-            >TENTANG</span
-          >
-          <span class="nav-link" onclick="navigateTo('page-panduan')"
-            >PANDUAN</span
-          >
-        </div>
-        <div class="center-content">
-          <h1 style="font-size: 2.5rem; letter-spacing: 2px">TERIMA KASIH!</h1>
-          <p style="font-weight: bold; font-size: 1rem">
-            TELAH MENGIKUTI SIMULASI PANCASILA THE CHOICE
-          </p>
-
-          <div
-            style="
-              display: flex;
-              flex-direction: column;
-              gap: 12px;
-              margin-top: 20px;
-              width: 250px;
-            "
-          >
-            <div class="btn-wireframe" onclick="navigateTo('page-skenario')">
-              ULANG SIMULASI
-            </div>
-            <div class="btn-wireframe" onclick="navigateTo('page-home')">
-              MENU Utama
-            </div>
+        <div class="hero-right">
+          <div class="img-placeholder" style="width: 85%; height: 80%;">
+            [ ILUSTRASI HERO / KARAKTER ]
           </div>
         </div>
       </div>
     </div>
 
+    <!-- PAGE: TENTANG -->
+    <div id="page-tentang" class="page">
+      <div class="navbar">
+        <span class="nav-link" onclick="navigateTo('page-home')">BERANDA</span>
+        <span class="nav-link" onclick="navigateTo('page-tentang')">TENTANG</span>
+        <span class="nav-link" onclick="navigateTo('page-panduan')">PANDUAN</span>
+      </div>
+      <div class="center-content">
+        <h2>TENTANG SIMULASI</h2>
+        <div class="box-dashed" style="width: 80%; font-size: 0.9rem; text-align: left; line-height: 1.6;">
+          <strong>Pancasila: The Choice</strong> adalah media pembelajaran interaktif berbasis skenario kasus kehidupan nyata.<br><br>
+          Aplikasi ini bertujuan untuk menguji pemahaman pengguna mengenai pengamalan Sila Pancasila dalam menyelesaikan masalah sosial.
+        </div>
+        <div class="btn-wireframe" onclick="navigateTo('page-home')">Kembali ke Beranda</div>
+      </div>
+    </div>
 
-    <!-- JAVASCRIPT NAVIGASI PAGE-PER-PAGE -->
-    <script>
-      function navigateTo(pageId) {
-        const pages = document.querySelectorAll(".page");
-        pages.forEach((page) => page.classList.remove("active"));
+    <!-- PAGE: PANDUAN -->
+    <div id="page-panduan" class="page">
+      <div class="navbar">
+        <span class="nav-link" onclick="navigateTo('page-home')">BERANDA</span>
+        <span class="nav-link" onclick="navigateTo('page-tentang')">TENTANG</span>
+        <span class="nav-link" onclick="navigateTo('page-panduan')">PANDUAN</span>
+      </div>
+      <div class="center-content">
+        <h2>PANDUAN PENGGUNAAN</h2>
+        <div class="box-dashed" style="width: 80%; font-size: 0.85rem; text-align: left; line-height: 1.6;">
+          1. Masukkan nama panggilanmu pada halaman awal.<br>
+          2. Pilih salah satu skenario kasus yang ingin kamu selesaikan.<br>
+          3. Baca jalan cerita dengan seksama.<br>
+          4. Pilih Opsi (A, B, atau C) sesuai dengan tindakan yang menurutmu paling tepat.<br>
+          5. Lihat evaluasi hasil dan pengamalan Sila Pancasila dari pilihanmu!
+        </div>
+        <div class="btn-wireframe" onclick="navigateTo('page-home')">Kembali ke Beranda</div>
+      </div>
+    </div>
 
-        const targetPage = document.getElementById(pageId);
-        if (targetPage) {
-          targetPage.classList.add("active");
-        }
+    <!-- PAGE 2: MASUKKAN NAMA -->
+    <div id="page-nama" class="page">
+      <div class="back-btn" onclick="navigateTo('page-home')">&lt;</div>
+      <div class="center-content">
+        <h2>MASUKKAN NAMAMU!</h2>
+        <div class="modal-window">
+          <div class="modal-header-dots">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+          <input type="text" class="input-field" placeholder="Ketik nama di sini..." value="User">
+          <div class="btn-wireframe" onclick="navigateTo('page-skenario')">Lanjut!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: PILIH SKENARIO -->
+    <div id="page-skenario" class="page">
+      <br>
+      <br>
+      <br>
+      <br>
+      <div class="back-btn" onclick="navigateTo('page-nama')">&lt;</div>
+      <div class="center-content" style="justify-content: flex-start; padding-top: 30px;">
+        <h2>PILIH SKENARIO</h2>
+        <p style="font-size: 0.8rem;">PILIH SATU KASUS UNTUK DISELESAIKAN</p>
+
+        <div class="scenario-grid">
+          <!-- Card 1: Perundungan -->
+          <div class="scenario-card" onclick="navigateTo('page-detail-skenario-1')">
+            <div class="img-placeholder" style="width: 100%; height: 130px;">[ Kasus 1: Perundungan ]</div>
+            <div style="font-size: 0.7rem; font-weight: bold; text-align: center;">PERUNDUNGAN DI LINGKUNGAN KAMPUS</div>
+          </div>
+          <!-- Card 2: Perbedaan Pendapat -->
+          <div class="scenario-card" onclick="navigateTo('page-detail-skenario-2')">
+            <div class="img-placeholder" style="width: 100%; height: 130px;">[ Kasus 2: Pendapat ]</div>
+            <div style="font-size: 0.7rem; font-weight: bold; text-align: center;">PERBEDAAN PENDAPAT DALAM KELOMPOK</div>
+          </div>
+          <!-- Card 3: Berita Belum Terverifikasi -->
+          <div class="scenario-card" onclick="navigateTo('page-detail-skenario-3')">
+            <div class="img-placeholder" style="width: 100%; height: 130px;">[ Kasus 3: Berita ]</div>
+            <div style="font-size: 0.7rem; font-weight: bold; text-align: center;">BERITA YANG BELUM TERVERIFIKASI</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px; font-size: 1.2rem;">★ ★ ★</div>
+      </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- SKENARIO 1: PERUNDUNGAN -->
+    <!-- ========================================== -->
+    <div id="page-detail-skenario-1" class="page">
+      <br>
+      <br>
+      <br>
+      <br>
+      <div class="back-btn" onclick="navigateTo('page-skenario')">&lt;</div>
+      <h3 style="text-align: center; margin-top: 20px; font-size: 1rem;">PERUNDUNGAN DI LINGKUNGAN KAMPUS</h3>
+      <div class="scenario-detail">
+        <div class="img-placeholder" style="width: 35%; height: 150px;">[ Gambar Perundungan ]</div>
+        <div class="box-dashed" style="width: 65%; height: 150px; font-size: 0.75rem; text-align: left; overflow-y: auto;">
+          Saat berjalan menuju kelas, kamu melihat seorang mahasiswa sedang duduk sendirian sambil membaca buku. Beberapa mahasiswa lain menghampirinya dan mulai mengejek penampilannya.<br><br>Apa yang akan kamu lakukan?
+        </div>
+      </div>
+      <div class="options-container">
+        <div class="option-btn" onclick="navigateTo('page-bad-ending-1')">OPSI A: Ikut tertawa dan mengejek agar diterima oleh kelompok tersebut.</div>
+        <div class="option-btn" onclick="navigateTo('page-good-ending-1')">OPSI B: Menegur para pelaku dan membela mahasiswa yang dirundung.</div>
+        <div class="option-btn" onclick="navigateTo('page-neutral-ending-1')">OPSI C: Memilih pergi karena merasa kejadian itu bukan urusanmu.</div>
+      </div>
+    </div>
+
+    <!-- Ending Skenario 1 -->
+    <div id="page-bad-ending-1" class="page">
+      <div class="back-btn" onclick="navigateTo('page-detail-skenario-1')">&lt;</div>
+      <div class="ending-container">
+        <div class="ending-left">
+          <div class="img-placeholder" style="height: 180px;">[ Opsi A ]</div>
+          <div class="box-dashed" style="font-size: 0.65rem;">BERTENTANGAN DENGAN SILA KE-2 KARENA TIDAK MENGHORMATI MARTABAT ORANG LAIN.</div>
+        </div>
+        <div class="ending-right">
+          <div style="font-weight: bold; font-size: 0.95rem;">KAMU IKUT MENGEJEK KORBAN.</div>
+          <div class="box-dashed" style="font-size: 0.75rem;">Tindakanmu memperburuk kondisi korban dan membuat perundungan semakin dinormalisasi.</div>
+          <h1 style="font-size: 2rem;">BAD ENDING...</h1>
+          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-good-ending-1" class="page">
+      <div class="back-btn" onclick="navigateTo('page-detail-skenario-1')">&lt;</div>
+      <div class="ending-container">
+        <div class="ending-left">
+          <div class="img-placeholder" style="height: 180px;">[ Opsi B ]</div>
+          <div class="box-dashed" style="font-size: 0.65rem;">MENCERMINKAN SILA KE-2 MELALUI SIKAP BERADAB DAN TENGGANG RASA.</div>
+        </div>
+        <div class="ending-right">
+          <div style="font-weight: bold; font-size: 0.95rem;">KAMU MEMBELA MAHASISWA YANG DIRUNDUNG.</div>
+          <div class="box-dashed" style="font-size: 0.75rem;">Kamu berani menghentikan perundungan dan membantu menciptakan lingkungan kampus yang aman.</div>
+          <h1 style="font-size: 2rem;">GOOD ENDING!</h1>
+          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-neutral-ending-1" class="page">
+      <div class="back-btn" onclick="navigateTo('page-detail-skenario-1')">&lt;</div>
+      <div class="ending-container">
+        <div class="ending-left">
+          <div class="img-placeholder" style="height: 180px;">[ Opsi C ]</div>
+          <div class="box-dashed" style="font-size: 0.65rem;">BELUM MENUNJUKKAN PENGAMALAN AKTIF SILA KE-2.</div>
+        </div>
+        <div class="ending-right">
+          <div style="font-weight: bold; font-size: 0.95rem;">KAMU MEMILIH PERGI.</div>
+          <div class="box-dashed" style="font-size: 0.75rem;">Kamu tidak ikut melakukan perundungan, tetapi tidak berusaha membantu korban.</div>
+          <h1 style="font-size: 2rem;">NEUTRAL ENDING</h1>
+          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- SKENARIO 2: PERBEDAAN PENDAPAT -->
+    <!-- ========================================== -->
+    <div id="page-detail-skenario-2" class="page">
+      <br>
+      <br>
+      <br>
+      <br>
+      <div class="back-btn" onclick="navigateTo('page-skenario')">&lt;</div>
+      <h3 style="text-align: center; margin-top: 20px; font-size: 1rem;">PERBEDAAN PENDAPAT DALAM KELOMPOK</h3>
+      <div class="scenario-detail">
+        <div class="img-placeholder" style="width: 35%; height: 150px;">[ Gambar Diskusi ]</div>
+        <div class="box-dashed" style="width: 65%; height: 150px; font-size: 0.75rem; text-align: left; overflow-y: auto;">
+          Kamu sedang mengerjakan tugas bersama empat teman. Ketua kelompok bersikeras menggunakan idenya sendiri dan menolak pendapat anggota lain. Suasana diskusi memanas. Apa yang akan kamu lakukan?
+        </div>
+      </div>
+      <div class="options-container">
+        <div class="option-btn" onclick="navigateTo('page-neutral-ending-2')">OPSI A: Mengikuti saja keputusan ketua agar diskusi cepat selesai.</div>
+        <div class="option-btn" onclick="navigateTo('page-good-ending-2')">OPSI B: Mengajak seluruh anggota berdiskusi dan mencari keputusan bersama.</div>
+        <div class="option-btn" onclick="navigateTo('page-bad-ending-2')">OPSI C: Memaksakan ide sendiri karena merasa pendapatmu paling benar.</div>
+      </div>
+    </div>
+
+    <!-- Ending Skenario 2 -->
+    <div id="page-neutral-ending-2" class="page">
+      <div class="back-btn" onclick="navigateTo('page-detail-skenario-2')">&lt;</div>
+      <div class="ending-container">
+        <div class="ending-left">
+          <div class="img-placeholder" style="height: 180px;">[ Opsi A ]</div>
+          <div class="box-dashed" style="font-size: 0.65rem;">BELUM MENCERMINKAN SILA KE-4 SECARA OPTIMAL (MENGABAIKAN MUSYAWARAH).</div>
+        </div>
+        <div class="ending-right">
+          <div style="font-weight: bold; font-size: 0.95rem;">KAMU MENGIKUTI KEPUTUSAN KETUA.</div>
+          <div class="box-dashed" style="font-size: 0.75rem;">Diskusi cepat selesai, tetapi keputusan tidak melibatkan seluruh anggota.</div>
+          <h1 style="font-size: 2rem;">NEUTRAL ENDING</h1>
+          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-good-ending-2" class="page">
+      <div class="back-btn" onclick="navigateTo('page-detail-skenario-2')">&lt;</div>
+      <div class="ending-container">
+        <div class="ending-left">
+          <div class="img-placeholder" style="height: 180px;">[ Opsi B ]</div>
+          <div class="box-dashed" style="font-size: 0.65rem;">MENCERMINKAN SILA KE-4 MELALUI MUSYAWARAH DAN KEPENTINGAN BERSAMA.</div>
+        </div>
+        <div class="ending-right">
+          <div style="font-weight: bold; font-size: 0.95rem;">KAMU MENGAJAK ANGGOTA BERDISKUSI.</div>
+          <div class="box-dashed" style="font-size: 0.75rem;">Kelompok mempertimbangkan berbagai ide dan mencapai kesepakatan bersama.</div>
+          <h1 style="font-size: 2rem;">GOOD ENDING!</h1>
+          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-bad-ending-2" class="page">
+      <div class="back-btn" onclick="navigateTo('page-detail-skenario-2')">&lt;</div>
+      <div class="ending-container">
+        <div class="ending-left">
+          <div class="img-placeholder" style="height: 180px;">[ Opsi C ]</div>
+          <div class="box-dashed" style="font-size: 0.65rem;">BERTENTANGAN DENGAN SILA KE-4 (MENGABAIKAN PRINSIP MUSYAWARAH).</div>
+        </div>
+        <div class="ending-right">
+          <div style="font-weight: bold; font-size: 0.95rem;">KAMU MEMAKSAKAN IDE SENDIRI.</div>
+          <div class="box-dashed" style="font-size: 0.75rem;">Diskusi berubah menjadi konflik dan kerja sama kelompok terganggu.</div>
+          <h1 style="font-size: 2rem;">BAD ENDING..</h1>
+          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- SKENARIO 3: BERITA BELUM TERVERIFIKASI -->
+    <!-- ========================================== -->
+    <div id="page-detail-skenario-3" class="page">
+      <br>
+      <br>
+      <br>
+      <br>
+      <div class="back-btn" onclick="navigateTo('page-skenario')">&lt;</div>
+      <h3 style="text-align: center; margin-top: 20px; font-size: 1rem;">BERITA YANG BELUM TERVERIFIKASI</h3>
+      <div class="scenario-detail">
+        <div class="img-placeholder" style="width: 35%; height: 150px;">[ Gambar Hoax ]</div>
+        <div class="box-dashed" style="width: 65%; height: 150px; font-size: 0.75rem; text-align: left; overflow-y: auto;">
+          Kamu menerima pesan berantai di grup mahasiswa berisi kabar bahwa salah satu dosen melakukan tindakan tidak pantas tanpa sumber yang jelas. Temanmu mulai membagikannya. Apa yang akan kamu lakukan?
+        </div>
+      </div>
+      <div class="options-container">
+        <div class="option-btn" onclick="navigateTo('page-bad-ending-3')">OPSI A: Langsung membagikan berita tersebut agar semakin banyak orang tahu.</div>
+        <div class="option-btn" onclick="navigateTo('page-good-ending-3')">OPSI B: Memeriksa kebenaran informasi melalui sumber resmi sebelum percaya.</div>
+        <div class="option-btn" onclick="navigateTo('page-neutral-ending-3')">OPSI C: Mengabaikan berita tersebut tanpa mencari tahu kebenarannya.</div>
+      </div>
+    </div>
+
+    <!-- Ending Skenario 3 -->
+    <div id="page-bad-ending-3" class="page">
+      <div class="back-btn" onclick="navigateTo('page-detail-skenario-3')">&lt;</div>
+      <div class="ending-container">
+        <div class="ending-left">
+          <div class="img-placeholder" style="height: 180px;">[ Opsi A ]</div>
+          <div class="box-dashed" style="font-size: 0.65rem;">BERTENTANGAN DENGAN SILA KE-2 DAN KE-4.</div>
+        </div>
+        <div class="ending-right">
+          <div style="font-weight: bold; font-size: 0.95rem;">MENYEBARKAN BERITA TANPA VERIFIKASI.</div>
+          <div class="box-dashed" style="font-size: 0.75rem;">Nama baik dosen tercemar dan menimbulkan kesalahpahaman di kampus.</div>
+          <h1 style="font-size: 2rem;">BAD ENDING..</h1>
+          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-good-ending-3" class="page">
+      <div class="back-btn" onclick="navigateTo('page-detail-skenario-3')">&lt;</div>
+      <div class="ending-container">
+        <div class="ending-left">
+          <div class="img-placeholder" style="height: 180px;">[ Opsi B ]</div>
+          <div class="box-dashed" style="font-size: 0.65rem;">MENCERMINKAN SILA KE-2 DAN KE-4.</div>
+        </div>
+        <div class="ending-right">
+          <div style="font-weight: bold; font-size: 0.95rem;">MEMERIKSA KEBENARAN INFORMASI TERLEBIH DAHULU.</div>
+          <div class="box-dashed" style="font-size: 0.75rem;">Penyebaran informasi yang menyesatkan dapat dicegah dan kamu mengingatkan teman.</div>
+          <h1 style="font-size: 2rem;">GOOD ENDING!</h1>
+          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-neutral-ending-3" class="page">
+      <div class="back-btn" onclick="navigateTo('page-detail-skenario-3')">&lt;</div>
+      <div class="ending-container">
+        <div class="ending-left">
+          <div class="img-placeholder" style="height: 180px;">[ Opsi C ]</div>
+          <div class="box-dashed" style="font-size: 0.65rem;">BELUM MENUNJUKKAN KEPEDULIAN AKTIF.</div>
+        </div>
+        <div class="ending-right">
+          <div style="font-weight: bold; font-size: 0.95rem;">MENGABAIKAN BERITA TANPA MENCARI TAHU.</div>
+          <div class="box-dashed" style="font-size: 0.75rem;">Informasi belum terverifikasi tetap beredar karena tidak ada upaya meluruskan.</div>
+          <h1 style="font-size: 2rem;">NEUTRAL ENDING</h1>
+          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- POPUP & TERIMA KASIH -->
+    <!-- ========================================== -->
+    <div id="page-popup-next" class="page">
+      <div class="back-btn" onclick="navigateTo('page-skenario')">&lt;</div>
+      <div class="center-content">
+        <div class="modal-window">
+          <div class="modal-header-dots">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+          <h3 style="margin: 10px 0;">INGIN MENCOBA SKENARIO LAIN?</h3>
+          <div style="display: flex; gap: 15px;">
+            <div class="btn-wireframe" onclick="navigateTo('page-skenario')">PILIH SKENARIO</div>
+            <div class="btn-wireframe" onclick="navigateTo('page-terima-kasih')">AKHIRI</div>
+          </div>
+        </div>
+        <div style="margin-top: 10px; font-size: 1.2rem;">★ ★ ★</div>
+      </div>
+    </div>
+
+    <div id="page-terima-kasih" class="page">
+      <div class="navbar">
+        <span class="nav-link" onclick="navigateTo('page-home')">BERANDA</span>
+        <span class="nav-link" onclick="navigateTo('page-tentang')">TENTANG</span>
+        <span class="nav-link" onclick="navigateTo('page-panduan')">PANDUAN</span>
+      </div>
+      <div class="center-content">
+        <h1 style="font-size: 2.5rem; letter-spacing: 2px;">TERIMA KASIH!</h1>
+        <p style="font-weight: bold; font-size: 1rem;">TELAH MENGIKUTI SIMULASI PANCASILA THE CHOICE</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 20px; width: 250px;">
+          <div class="btn-wireframe" onclick="navigateTo('page-skenario')">ULANG SIMULASI</div>
+          <div class="btn-wireframe" onclick="navigateTo('page-home')">MENU Utama</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PEMUTAR MUSIK MP3 LOKAL (DI POJOK KANAN BAWAH) -->
+  <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: #fff; border: 2px solid #000; padding: 10px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px; box-shadow: 3px 3px 0px #000;">
+    <span style="font-weight: bold; font-size: 0.85rem;">🎵 Musik:</span>
+    <button id="music-btn" onclick="toggleLocalMusic()" class="btn-wireframe" style="padding: 4px 12px; font-size: 0.8rem;">▶ Play</button>
+  </div>
+
+  <!-- ELEMEN AUDIO HTML5 -->
+  <audio id="bg-music" src="/assets/lagu.mp3" loop></audio>
+
+  <!-- JAVASCRIPT NAVIGASI & MUSIK LOKAL -->
+  <script>
+    function navigateTo(pageId) {
+      const pages = document.querySelectorAll('.page');
+      pages.forEach(page => page.classList.remove('active'));
+
+      const targetPage = document.getElementById(pageId);
+      if (targetPage) {
+        targetPage.classList.add('active');
       }
-      function toggleLocalMusic() {
-        const audio = document.getElementById("bg-music");
-        const btn = document.getElementById("music-btn");
+    }
 
-        if (audio.paused) {
-          audio
-            .play()
-            .then(() => {
-              btn.innerText = "⏸ Pause";
-            })
-            .catch((error) => {
-              alert(
-                "Gagal memutar lagu. Pastikan file 'lagu.mp3' sudah ada di folder project yang sama!",
-              );
-            });
-        } else {
-          audio.pause();
-          btn.innerText = "▶ Play";
-        }
+    function toggleLocalMusic() {
+      const audio = document.getElementById('bg-music');
+      const btn = document.getElementById('music-btn');
+
+      if (audio.paused) {
+        audio.play().then(() => {
+          btn.innerText = "⏸ Pause";
+        }).catch(error => {
+          alert("Gagal memutar lagu. Pastikan file 'lagu.mp3' sudah ada di folder project yang sama!");
+        });
+      } else {
+        audio.pause();
+        btn.innerText = "▶ Play";
       }
-    </script>
-
-    <audio id="bg-music" src="/assets/lagu.mp3" loop></audio>
-  </body>
+    }
+  </script>
+</body>
 </html>
