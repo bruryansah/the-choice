@@ -1,0 +1,35 @@
+DAFTAR NAMA FILE GAMBAR UNTUK SIMULASI PANCASILA:
+=====================================================
+Cukup simpan file gambar (.png atau .jpg) Anda ke dalam folder ini dengan nama-nama berikut, 
+maka gambar akan otomatis langsung muncul di website:
+
+1. HALAMAN UTAMA / HERO:
+   - hero.png          -> Ilustrasi karakter pemuda di halaman beranda
+
+2. KARTU PILIH SKENARIO:
+   - kasus-1.png       -> Thumbnail Kasus 1 (Perundungan di Kampus)
+   - kasus-2.png       -> Thumbnail Kasus 2 (Perbedaan Pendapat dalam Kelompok)
+   - kasus-3.png       -> Thumbnail Kasus 3 (Berita Belum Terverifikasi)
+
+3. SKENARIO 1 (PERUNDUNGAN):
+   - adegan-1.png      -> Gambar adegan narasi mahasiswa membaca buku
+   - bad-1.png         -> Gambar Opsi A (Bad Ending: Ikut mengejek)
+   - good-1.png        -> Gambar Opsi B (Good Ending: Membela korban)
+   - neutral-1.png     -> Gambar Opsi C (Neutral Ending: Memilih pergi)
+
+4. SKENARIO 2 (PERBEDAAN PENDAPAT):
+   - adegan-2.png      -> Gambar adegan diskusi kelompok
+   - neutral-2.png     -> Gambar Opsi A (Neutral Ending: Mengikuti ketua)
+   - good-2.png        -> Gambar Opsi B (Good Ending: Mengajak musyawarah)
+   - bad-2.png         -> Gambar Opsi C (Bad Ending: Memaksakan ide sendiri)
+
+5. SKENARIO 3 (BERITA HOAKS):
+   - adegan-3.png      -> Gambar adegan pesan berantai di ponsel
+   - bad-3.png         -> Gambar Opsi A (Bad Ending: Langsung membagikan)
+   - good-3.png        -> Gambar Opsi B (Good Ending: Memeriksa kebenaran)
+   - neutral-3.png     -> Gambar Opsi C (Neutral Ending: Mengabaikan saja)
+
+Catatan:
+- Format rekomendasi: PNG atau JPG transparan/putih.
+- Jika gambar belum dimasukkan, website akan secara rapi menampilkan kotak placeholder yang informatif.
+

@@ -1,838 +1,1894 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wireframe - Simulasi Interaktif Pancasila</title>
+  <title>Pancasila: The Choice - Simulasi Interaktif</title>
+
+  <!-- GOOGLE FONTS: Fredoka / Paytone One (Display Chunky Retro) & Plus Jakarta Sans (Clean Modern Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Paytone+One&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
-    /* RESET & BASE WIREFRAME STYLES */
+    /* =========================================================
+       1. DESIGN SYSTEM VARIABLES & RESET
+       ========================================================= */
+    :root {
+      --bg-gradient-start: #8E2020;
+      --bg-gradient-mid: #A52929;
+      --bg-gradient-end: #611111;
+      
+      --color-gold: #FFCA28;
+      --color-gold-hover: #FFD54F;
+      --color-gold-dark: #D49D00;
+      
+      --color-cream-card: #FFF3EB;
+      --color-cream-light: #FFF9F5;
+      
+      --color-dark: #2A0808;
+      --color-text-dark: #260606;
+      --color-text-muted: #5E3A3A;
+      --color-border: #380D0D;
+      
+      /* Status Colors for Endings */
+      --bad-bg: #7C1818;
+      --bad-border: #4D0909;
+      --bad-light: #FF8080;
+      
+      --good-bg: #3E632A;
+      --good-border: #243D15;
+      --good-light: #A5D6A7;
+      
+      --neutral-bg: #9E5619;
+      --neutral-border: #5B2E07;
+      --neutral-light: #FFE082;
+
+      --font-display: 'Paytone One', 'Fredoka', cursive, sans-serif;
+      --font-heading: 'Fredoka', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      
+      --shadow-retro: 3px 3px 0px var(--color-border);
+      --shadow-retro-lg: 5px 5px 0px var(--color-border);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Courier New', Courier, monospace;
+      -webkit-font-smoothing: antialiased;
     }
 
     body {
-      background-color: #e0e0e0;
-      color: #111;
+      background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-mid) 50%, var(--bg-gradient-end) 100%);
+      color: #fff;
+      font-family: var(--font-body);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    /* CONTAINER PER-PAGE (TAMPILAN SATU BINGKAI) */
-    .app-container {
-      width: 900px;
-      height: 550px;
-      border: 3px solid #000;
-      background-color: #fff;
+      padding: 15px;
+      overflow-x: hidden;
       position: relative;
-      box-shadow: 6px 6px 0px #888;
-      overflow: hidden;
     }
 
-    /* SISTEM NAVIGATION PAGE (PER-PAGE HIDE/SHOW) */
+    /* BACKGROUND ATMOSPHERE: Puzzle Outline Texture & Soft Light Waves */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 80% 20%, rgba(255, 214, 102, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 15% 85%, rgba(0, 0, 0, 0.25) 0%, transparent 50%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160' opacity='0.06'%3E%3Cpath fill='%23FFFFFF' d='M40 0 C40 10 50 15 50 25 C50 35 40 40 40 50 L40 80 L10 80 C0 80 -5 70 -15 70 C-25 70 -30 80 -40 80 L-40 40 L0 40 C10 40 15 30 15 20 C15 10 10 0 0 0 Z M120 80 C120 90 130 95 130 105 C130 115 120 120 120 130 L120 160 L90 160 C80 160 75 150 65 150 C55 150 50 160 40 160 L40 120 L80 120 C90 120 95 110 95 100 C95 90 90 80 80 80 Z'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* =========================================================
+       2. CANVAS APP CONTAINER (RESPONSIVE 16:9 / FLUID)
+       ========================================================= */
+    .canvas-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .app-canvas {
+      width: 100%;
+      aspect-ratio: 16 / 9.6;
+      min-height: 600px;
+      background: linear-gradient(160deg, #992323 0%, #831B1B 55%, #691414 100%);
+      border: 3.5px solid var(--color-border);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45), 0 0 0 2px rgba(255, 230, 200, 0.15);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* WATERMARK GARUDA SILHOUETTE (INSIDE CANVAS) */
+    .garuda-watermark {
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 480px;
+      height: 380px;
+      pointer-events: none;
+      opacity: 0.12;
+      z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFD54F'%3E%3Cpath d='M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm0 2.18l6 2.25v4.66c0 4.09-2.67 7.91-6 8.89-3.33-.98-6-4.8-6-8.89V6.43l6-2.25zM11 7h2v5h-2zm0 6h2v2h-2z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center bottom;
+      background-size: contain;
+    }
+
+    /* =========================================================
+       3. NAVIGATION BAR
+       ========================================================= */
+    .navbar {
+      width: 100%;
+      height: 52px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px dashed rgba(255, 230, 200, 0.35);
+      position: relative;
+      z-index: 15;
+      background: rgba(85, 12, 12, 0.45);
+      backdrop-filter: blur(4px);
+    }
+
+    .brand-tag {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .player-chip {
+      background: var(--color-gold);
+      color: var(--color-dark);
+      padding: 3px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-family: var(--font-body);
+      font-weight: 700;
+      border: 1.5px solid var(--color-border);
+      box-shadow: 1px 1px 0px var(--color-border);
+      display: none; /* activated when user types name */
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-link {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      color: #FFE6D6;
+      text-decoration: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-link:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    /* BACK BUTTON IN SCREEN CORNER */
+    .back-btn {
+      position: absolute;
+      top: 64px;
+      left: 20px;
+      width: 38px;
+      height: 38px;
+      background: var(--color-gold);
+      color: var(--color-dark);
+      border: 2.5px solid var(--color-border);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-family: var(--font-display);
+      cursor: pointer;
+      z-index: 20;
+      box-shadow: var(--shadow-retro);
+      transition: all 0.15s;
+    }
+
+    .back-btn:hover {
+      background: #FFF;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 0 var(--color-border);
+    }
+
+    .back-btn:active {
+      transform: translateY(1px);
+      box-shadow: 1px 1px 0 var(--color-border);
+    }
+
+    /* =========================================================
+       4. PAGE SYSTEM & TRANSITIONS
+       ========================================================= */
+    .page-viewport {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: calc(100% - 52px);
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar */
+    .page-viewport::-webkit-scrollbar {
+      width: 6px;
+    }
+    .page-viewport::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.15);
+    }
+    .page-viewport::-webkit-scrollbar-thumb {
+      background: var(--color-gold);
+      border-radius: 10px;
+    }
+
     .page {
       display: none;
       width: 100%;
-      height: 100%;
+      min-height: 100%;
       position: absolute;
       top: 0;
       left: 0;
+      padding: 24px 35px;
       flex-direction: column;
-      background: #fff;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
     }
 
     .page.active {
       display: flex;
+      animation: fadeInPage 0.35s ease-out forwards;
     }
 
-    /* COMMON COMPONENTS */
-    .navbar {
-      display: flex;
-      justify-content: flex-end;
-      gap: 20px;
-      padding: 15px 30px;
-      font-weight: bold;
-      font-size: 0.9rem;
-      border-bottom: 2px dashed #000;
-      background: #fafafa;
+    @keyframes fadeInPage {
+      from { opacity: 0; transform: scale(0.985); }
+      to { opacity: 1; transform: scale(1); }
     }
 
-    .nav-link {
-      cursor: pointer;
-      padding: 2px 6px;
-      border: 1px solid transparent;
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
 
-    .nav-link:hover {
-      border: 1px solid #000;
-      background: #eee;
-    }
-
-    .btn-wireframe {
-      border: 2px solid #000;
-      background: #fff;
-      padding: 8px 20px;
-      border-radius: 20px;
-      font-weight: bold;
-      cursor: pointer;
-      display: inline-block;
+    /* =========================================================
+       5. COMMON UI COMPONENTS (RETRO-POP / HI-FI)
+       ========================================================= */
+    /* DISPLAY HEADINGS */
+    .heading-chunky {
+      font-family: var(--font-display);
+      font-size: 2.3rem;
+      letter-spacing: 1.5px;
+      color: #FFFFFF;
+      text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.45);
+      text-transform: uppercase;
       text-align: center;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      background: var(--color-gold);
+      color: var(--color-dark);
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      padding: 6px 18px;
+      border-radius: 999px;
+      border: 2.5px solid var(--color-border);
+      box-shadow: var(--shadow-retro);
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .badge-pill.sm {
+      font-size: 0.75rem;
+      padding: 4px 12px;
+      border-width: 2px;
+    }
+
+    /* BUTTONS */
+    .btn-pill {
+      background: #FFFFFF;
+      color: var(--color-dark);
+      font-family: var(--font-display);
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      padding: 10px 28px;
+      border-radius: 999px;
+      border: 2.5px solid var(--color-border);
+      box-shadow: 0 4px 0px var(--color-border);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
       user-select: none;
+      text-decoration: none;
     }
 
-    .btn-wireframe:hover {
-      background: #000;
-      color: #fff;
+    .btn-pill:hover {
+      background: var(--color-gold);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0px var(--color-border);
     }
 
-    .back-btn {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      width: 35px;
-      height: 30px;
-      border: 2px solid #000;
+    .btn-pill:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0px var(--color-border);
+    }
+
+    .btn-pill.btn-gold {
+      background: var(--color-gold);
+    }
+    .btn-pill.btn-gold:hover {
+      background: #FFF;
+    }
+
+    /* MAC-STYLE MODAL WINDOW */
+    .mac-window {
+      background: var(--color-cream-card);
+      border: 3px solid var(--color-border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-retro-lg);
+      padding: 0 0 20px 0;
+      color: var(--color-text-dark);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mac-window-header {
+      background: #FFE2D4;
+      border-bottom: 2.5px solid var(--color-border);
+      padding: 8px 14px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      background: #fff;
-      z-index: 10;
-      cursor: pointer;
+      gap: 7px;
     }
 
-    .back-btn:hover {
-      background: #ddd;
-    }
-
-    .img-placeholder {
-      background: #e0e0e0;
-      border: 2px solid #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #555;
-      font-size: 0.85rem;
-      text-align: center;
-      padding: 10px;
-    }
-
-    .box-dashed {
-      border: 2px dashed #666;
-      padding: 10px;
-      background: #fafafa;
-    }
-
-    .center-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      gap: 15px;
-      padding: 20px;
-      text-align: center;
-    }
-
-    /* 1. HOME / BERANDA */
-    .hero-body {
-      display: flex;
-      flex: 1;
-      padding: 20px 40px;
-    }
-    .hero-left {
-      width: 50%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 15px;
-    }
-    .hero-title-box {
-      border: 2px solid #000;
-      padding: 10px;
-      font-weight: bold;
-      font-size: 1.8rem;
-      text-align: center;
-    }
-    .subtitle-box {
-      border: 2px solid #000;
-      padding: 5px 15px;
-      display: inline-block;
-      width: fit-content;
-      border-radius: 15px;
-      font-weight: bold;
-    }
-    .hero-right {
-      width: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* 2. MODAL NAMA & POPUP */
-    .modal-window {
-      width: 420px;
-      border: 2px solid #000;
-      border-radius: 12px;
-      background: #fff;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      align-items: center;
-    }
-    .modal-header-dots {
-      width: 100%;
-      display: flex;
-      gap: 6px;
-      border-bottom: 1px solid #ccc;
-      padding-bottom: 8px;
-    }
-    .dot {
-      width: 10px;
-      height: 10px;
+    .mac-dot {
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      border: 1px solid #000;
+      border: 1.5px solid rgba(0, 0, 0, 0.4);
     }
-    .input-field {
-      width: 80%;
-      padding: 10px;
-      border: 2px dashed #000;
-      border-radius: 20px;
+    .mac-dot.red { background: #FF5F56; }
+    .mac-dot.yellow { background: #FFBD2E; }
+    .mac-dot.green { background: #27C93F; }
+
+    .mac-window-body {
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
-      outline: none;
-      font-family: inherit;
     }
 
-    /* 3. PILIH SKENARIO */
-    .scenario-grid {
+    /* PLACEHOLDER GAMBAR (UNTUK DIISI GAMBAR OLEH USER) */
+    .img-slot {
+      background: #FFF9F5;
+      border: 2.5px solid var(--color-border);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-muted);
+      font-size: 0.8rem;
+      text-align: center;
+      padding: 8px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-retro);
+    }
+
+    .img-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 10px;
+    }
+
+    .img-slot .slot-label {
+      font-weight: 700;
+      color: var(--color-dark);
+      margin-top: 4px;
+      font-size: 0.72rem;
+    }
+
+    .img-slot .slot-hint {
+      font-size: 0.65rem;
+      color: #888;
+    }
+
+    /* =========================================================
+       6. SPESIFIKASI LAYAR PER-PAGE
+       ========================================================= */
+
+    /* --- PAGE 1: BERANDA / HERO --- */
+    #page-home {
+      padding: 30px 45px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 30px;
+      width: 100%;
+      height: 100%;
+      align-items: center;
+      position: relative;
+      z-index: 5;
+    }
+
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      line-height: 1;
+      letter-spacing: 2px;
+      color: #FFFFFF;
+      text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.45);
+    }
+
+    .hero-desc-card {
+      background: rgba(255, 243, 235, 0.95);
+      border: 2.5px solid var(--color-border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      color: var(--color-text-dark);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      font-weight: 500;
+      box-shadow: var(--shadow-retro);
+      max-width: 460px;
+    }
+
+    .hero-right {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      align-items: center;
+    }
+
+    .hero-illustration-box {
+      width: 100%;
+      max-width: 360px;
+      height: 290px;
+    }
+
+    /* --- PAGE 2: MASUKKAN NAMA --- */
+    #page-nama .mac-window {
+      width: 440px;
       margin-top: 15px;
     }
-    .scenario-card {
-      width: 230px;
-      border: 2px solid #000;
-      border-radius: 10px;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      align-items: center;
-      background: #fff;
-      cursor: pointer;
-    }
-    .scenario-card:hover {
-      background: #f0f0f0;
-      border-width: 3px;
+
+    .input-wrapper {
+      width: 100%;
+      position: relative;
+      margin: 15px 0 20px;
     }
 
-    /* 4. SKENARIO DETAIL */
-    .scenario-detail {
-      display: flex;
-      gap: 20px;
-      padding: 15px 30px;
-      align-items: center;
+    .input-name {
+      width: 100%;
+      padding: 12px 18px 12px 42px;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-dark);
+      background: #FFFFFF;
+      border: 2.5px solid var(--color-border);
+      border-radius: 999px;
+      outline: none;
+      box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.08);
+      transition: all 0.2s;
     }
-    .options-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 0 30px 20px;
+
+    .input-name:focus {
+      border-color: var(--color-gold);
+      box-shadow: 0 0 0 3px rgba(255, 202, 40, 0.4);
     }
-    .option-btn {
-      border: 2px solid #000;
-      padding: 12px;
-      border-radius: 20px;
+
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+
+    /* --- PAGE 3: PILIH SKENARIO --- */
+    #page-skenario {
+      padding-top: 20px;
+      justify-content: flex-start;
+    }
+
+    .scenario-header-wrap {
       text-align: center;
-      font-size: 0.8rem;
-      font-weight: bold;
-      background: #fff;
-      cursor: pointer;
-    }
-    .option-btn:hover {
-      background: #000;
-      color: #fff;
+      margin-bottom: 20px;
     }
 
-    /* 5. ENDING PAGES */
-    .ending-container {
-      display: flex;
-      padding: 20px;
+    .greeting-text {
+      font-size: 0.9rem;
+      margin-top: 8px;
+      color: #FFE6D6;
+    }
+
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 20px;
-      height: 100%;
+      width: 100%;
+      max-width: 960px;
+    }
+
+    .scenario-card {
+      background: var(--color-cream-card);
+      border: 3px solid var(--color-border);
+      border-radius: 18px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
       align-items: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-retro);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    .ending-left {
-      width: 40%;
+
+    .scenario-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 0 var(--color-border);
+      background: #FFF9F5;
+    }
+
+    .scenario-card .img-slot {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 12px;
+      background: #FFFFFF;
+    }
+
+    .scenario-card .card-title-pill {
+      width: 100%;
+      background: var(--color-gold);
+      color: var(--color-dark);
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      text-align: center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 2px solid var(--color-border);
+      line-height: 1.25;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .stars-rating {
+      color: var(--color-gold);
+      font-size: 1.5rem;
+      letter-spacing: 6px;
+      margin-top: 18px;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+    }
+
+    /* --- SKENARIO DETAIL (NARRATIVE & CHOICES) --- */
+    .scenario-layout {
+      width: 100%;
+      max-width: 900px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 15px;
+      margin-top: 10px;
     }
-    .ending-right {
-      width: 60%;
+
+    .narrative-card {
+      background: var(--color-cream-card);
+      border: 3px solid var(--color-border);
+      border-radius: 18px;
+      padding: 14px 18px;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 20px;
+      align-items: center;
+      box-shadow: var(--shadow-retro);
+    }
+
+    .narrative-card .img-slot {
+      height: 155px;
+      width: 100%;
+    }
+
+    .narrative-text-box {
+      background: #FFF;
+      border: 2px solid var(--color-border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      color: var(--color-text-dark);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      font-weight: 500;
+      max-height: 155px;
+      overflow-y: auto;
+    }
+
+    .options-list {
       display: flex;
       flex-direction: column;
+      gap: 9px;
+      width: 100%;
+    }
+
+    .option-btn {
+      background: #FFFFFF;
+      color: var(--color-text-dark);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: 2.5px solid var(--color-border);
+      box-shadow: 0 3px 0 var(--color-border);
+      cursor: pointer;
+      text-align: left;
+      line-height: 1.35;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option-btn .opt-badge {
+      background: var(--color-gold);
+      color: var(--color-dark);
+      font-family: var(--font-display);
+      padding: 2px 10px;
+      border-radius: 999px;
+      border: 1.5px solid var(--color-border);
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    .option-btn:hover {
+      background: var(--color-gold);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 0 var(--color-border);
+    }
+
+    .option-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 0 var(--color-border);
+    }
+
+    /* --- ENDING SCREENS (BAD, GOOD, NEUTRAL) --- */
+    .ending-card-container {
+      width: 100%;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-top: 10px;
+    }
+
+    .ending-left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ending-left-panel .img-slot {
+      height: 190px;
+    }
+
+    .ending-sila-box {
+      background: var(--color-gold);
+      color: var(--color-dark);
+      border: 2.5px solid var(--color-border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-family: var(--font-display);
+      font-size: 0.72rem;
+      line-height: 1.3;
+      text-transform: uppercase;
+      box-shadow: var(--shadow-retro);
+      text-align: center;
+    }
+
+    .ending-result-card {
+      border: 3.5px solid var(--color-border);
+      border-radius: 18px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #FFF;
+      box-shadow: var(--shadow-retro-lg);
+      position: relative;
+    }
+
+    /* THEMES FOR ENDING CARDS */
+    .ending-result-card.bad {
+      background: linear-gradient(145deg, #8A1A1A 0%, #630F0F 100%);
+    }
+    .ending-result-card.good {
+      background: linear-gradient(145deg, #446C2D 0%, #2A481A 100%);
+    }
+    .ending-result-card.neutral {
+      background: linear-gradient(145deg, #A85D1A 0%, #753E0B 100%);
+    }
+
+    .ending-action-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .ending-desc-box {
+      background: rgba(255, 255, 255, 0.95);
+      border: 2px solid var(--color-border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: var(--color-text-dark);
+      font-size: 0.88rem;
+      line-height: 1.45;
+      font-weight: 500;
+      margin-bottom: 15px;
+    }
+
+    .ending-stamp {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
+      margin: 10px 0;
+    }
+
+    .ending-stamp.bad { color: #FFA4A4; }
+    .ending-stamp.good { color: #C8E6C9; }
+    .ending-stamp.neutral { color: #FFE082; }
+
+    /* --- POPUP / NEXT MODAL --- */
+    #page-popup-next .mac-window {
+      width: 480px;
+    }
+
+    /* --- TERIMA KASIH (ENDING) --- */
+    .thanks-card {
+      background: var(--color-cream-card);
+      border: 3.5px solid var(--color-border);
+      border-radius: 20px;
+      padding: 30px 40px;
+      max-width: 600px;
+      text-align: center;
+      color: var(--color-text-dark);
+      box-shadow: var(--shadow-retro-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* --- OVERLAY MODALS (TENTANG & PANDUAN) --- */
+    .overlay-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(40, 7, 7, 0.75);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
       justify-content: center;
+      padding: 20px;
+    }
+
+    .overlay-modal.active {
+      display: flex;
+      animation: popIn 0.25s ease-out;
+    }
+
+    .overlay-modal .mac-window {
+      width: 100%;
+      max-width: 560px;
+    }
+
+    /* =========================================================
+       7. AUDIO CONTROLLER & FLOATING TOOLBAR
+       ========================================================= */
+    .toolbar-dock {
+      margin-top: 12px;
+      display: flex;
       align-items: center;
       gap: 15px;
-      text-align: center;
+      z-index: 10;
     }
 
-    /* ========================================== */
-    /* RESPONSIVE MOBILE OPTIMIZATION (CLEAN & FIXED) */
-    /* ========================================== */
-    @media screen and (max-width: 768px) {
-      body {
-        padding: 0;
-        height: 100vh;
-        overflow: hidden;
+    .tool-pill {
+      background: #FFFFFF;
+      color: var(--color-dark);
+      border: 2px solid var(--color-border);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-retro);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s;
+    }
+
+    .tool-pill:hover {
+      background: var(--color-gold);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 0 var(--color-border);
+    }
+
+    .eq-bar {
+      width: 3px;
+      height: 12px;
+      background: var(--color-dark);
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .eq-bar.active {
+      animation: eqBounce 0.6s infinite alternate ease-in-out;
+    }
+    .eq-bar:nth-child(2).active { animation-delay: 0.2s; }
+    .eq-bar:nth-child(3).active { animation-delay: 0.4s; }
+
+    @keyframes eqBounce {
+      0% { height: 4px; }
+      100% { height: 14px; }
+    }
+
+    /* FULLSCREEN ADAPTATION */
+    #mainCanvas:fullscreen,
+    #mainCanvas:-webkit-full-screen {
+      width: 100vw;
+      height: 100vh;
+      border-radius: 0;
+      border: none;
+      max-width: none;
+      aspect-ratio: auto;
+    }
+
+    /* =========================================================
+       8. RESPONSIVE DESIGN (TABLET & MOBILE)
+       ========================================================= */
+    @media (max-width: 900px) {
+      .app-canvas {
+        aspect-ratio: auto;
+        min-height: calc(100vh - 80px);
+        border-radius: 14px;
       }
-      .app-container {
-        width: 100vw;
-        height: 100vh;
-        border: none;
-        box-shadow: none;
-        border-radius: 0;
-      }
-      .page {
-        overflow-y: auto;
-        padding-bottom: 60px;
-      }
+
+      /* FIX 1: NAVBAR - Sembunyikan brand-tag agar PANDUAN tidak tertutup */
       .navbar {
-        padding: 10px;
         justify-content: center;
-        gap: 15px;
-        font-size: 0.75rem;
-        position: sticky;
-        top: 0;
-        z-index: 100;
+        padding: 0 10px;
       }
-      .back-btn {
-        top: 10px;
-        left: 10px;
-        width: 30px;
-        height: 25px;
-        z-index: 101;
-      }
-      .hero-body {
-        flex-direction: column;
-        padding: 20px;
-        justify-content: center;
-      }
-      .hero-left, .hero-right {
-        width: 100%;
-      }
-      .hero-right {
+      .brand-tag {
         display: none;
       }
-      .hero-title-box {
-        font-size: 1.5rem;
-        margin-top: 10px;
-      }
-      .modal-window {
-        width: 90%;
-        padding: 15px;
-        margin: auto;
-      }
-      .scenario-grid {
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-        margin-top: 10px;
-      }
-      .scenario-card {
-        width: 92%;
-        flex-direction: row;
-        height: auto;
-        padding: 8px;
-        gap: 10px;
-      }
-      .scenario-card .img-placeholder {
-        width: 80px !important;
-        height: 60px !important;
-        font-size: 0.5rem;
-      }
-      .scenario-detail {
-        flex-direction: column;
-        padding: 10px 15px;
-        gap: 10px;
-        margin-top: 90px;
-      }
-      .scenario-detail h3 {
-        margin-top: 35px !important;
-        font-size: 0.9rem !important;
-      }
-      .scenario-detail .img-placeholder {
-        width: 100% !important;
-        height: 80px !important;
-      }
-      .scenario-detail .box-dashed {
-        width: 100% !important;
-        height: auto !important;
-        max-height: 110px;
-        font-size: 0.7rem;
-        overflow-y: auto;
-      }
-      .options-container {
-        padding: 5px 15px 15px;
+      .nav-links {
         gap: 8px;
       }
-      .option-btn {
-        padding: 10px;
-        font-size: 0.7rem;
+      .nav-link {
+        font-size: 0.72rem;
+        padding: 4px 6px;
       }
-      .ending-container {
-        flex-direction: column;
-        padding: 15px;
-        gap: 15px;
-        justify-content: center;
+
+      /* FIX 2 & 3: BACK BUTTON - In-flow agar tidak tumpang tindih dengan konten */
+      .back-btn {
+        position: static;
+        align-self: flex-start;
+        margin-bottom: 10px;
+        width: 34px;
+        height: 34px;
+        font-size: 1.1rem;
       }
-      .ending-left {
-        width: 100%;
-        flex-direction: row;
-        gap: 10px;
+
+      /* Halaman yang pakai back-btn: atur flex dari atas */
+      #page-nama,
+      #page-skenario,
+      #page-detail-skenario-1,
+      #page-detail-skenario-2,
+      #page-detail-skenario-3,
+      #page-bad-ending-1, #page-good-ending-1, #page-neutral-ending-1,
+      #page-bad-ending-2, #page-good-ending-2, #page-neutral-ending-2,
+      #page-bad-ending-3, #page-good-ending-3, #page-neutral-ending-3 {
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+
+      /* FIX 2: MASUKKAN NAMA - mac-window tidak terpotong */
+      #page-nama {
         align-items: center;
       }
-      .ending-left .img-placeholder {
-        height: 70px !important;
-        width: 35%;
-      }
-      .ending-left .box-dashed {
-        font-size: 0.6rem;
-        width: 65%;
-      }
-      .ending-right {
+      #page-nama .mac-window {
         width: 100%;
-        gap: 10px;
+        max-width: 100%;
       }
-      .ending-right h1 {
-        font-size: 1.5rem !important;
+      #page-nama .heading-chunky {
+        font-size: 1.5rem;
+        align-self: center;
       }
-      .center-content {
-        padding: 15px;
-        justify-content: center;
-        margin-top: 90px;
+
+      /* FIX 3: SKENARIO & DETAIL - konten sejajarkan ulang ke tengah setelah back-btn */
+      #page-skenario .scenario-header-wrap,
+      #page-skenario .scenario-grid,
+      #page-skenario .stars-rating,
+      #page-detail-skenario-1 .badge-pill,
+      #page-detail-skenario-2 .badge-pill,
+      #page-detail-skenario-3 .badge-pill,
+      #page-detail-skenario-1 .scenario-layout,
+      #page-detail-skenario-2 .scenario-layout,
+      #page-detail-skenario-3 .scenario-layout {
+        align-self: center;
+        width: 100%;
+      }
+
+      /* FIX B: Kurangi gap di pilih skenario antara greeting & kartu */
+      #page-skenario {
+        padding-top: 10px;
+      }
+      #page-skenario .scenario-header-wrap {
+        margin-bottom: 8px;
+      }
+      #page-skenario .greeting-text {
+        margin-top: 4px;
+        font-size: 0.8rem;
+      }
+
+      /* FIX C: Beranda terlalu ke kanan di HP → center + padding seimbang */
+      #page-home {
+        padding: 20px 14px;
+        align-items: center;
+      }
+      #page-home .hero-grid {
+        justify-items: center;
+        text-align: center;
+      }
+      #page-home .hero-left {
+        align-items: center;
+        width: 100%;
+      }
+
+      /* FIX D: Popup evaluasi selesai - mac-window tidak terpotong */
+      #page-popup-next .mac-window {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* FIX 4: ENDING - tidak terpotong kanan-kiri */
+      #page-bad-ending-1, #page-good-ending-1, #page-neutral-ending-1,
+      #page-bad-ending-2, #page-good-ending-2, #page-neutral-ending-2,
+      #page-bad-ending-3, #page-good-ending-3, #page-neutral-ending-3 {
+        overflow-x: hidden;
+        align-items: center;
+        padding: 16px 12px;
+      }
+      .ending-card-container {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        width: 100%;
+        box-sizing: border-box;
+        max-width: 100%;
+      }
+      .ending-left-panel .img-slot {
+        height: 120px;
+      }
+      .ending-result-card {
+        padding: 16px;
+        box-sizing: border-box;
+      }
+      .ending-stamp {
+        font-size: 1.6rem;
+      }
+      .ending-desc-box {
+        font-size: 0.82rem;
+        margin-bottom: 10px;
+      }
+
+      /* HERO */
+      .hero-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 20px;
+      }
+      .hero-left {
+        align-items: center;
+      }
+      .hero-title {
+        font-size: 2.8rem;
+      }
+      .hero-illustration-box {
+        height: 200px;
+      }
+
+      /* SKENARIO CARD */
+      .scenario-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      .scenario-card .img-slot {
+        height: 120px;
+      }
+
+      /* NARRATIVE */
+      .narrative-card {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .narrative-card .img-slot {
+        height: 120px;
+      }
+
+      .heading-chunky {
+        font-size: 1.8rem;
+      }
+
+      .page {
+        padding: 16px 14px;
+        position: relative;
+        min-height: auto;
       }
     }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
+  <!-- =========================================================
+       CANVAS WRAPPER: 16:9 RESPONSIVE SIMULATION CONTAINER
+       ========================================================= -->
+  <div class="canvas-wrapper">
+    <div class="app-canvas" id="mainCanvas">
+      
+      <!-- SILUET GARUDA PANCASILA DALAM CANVAS -->
+      <div class="garuda-watermark"></div>
 
-    <!-- PAGE 1: BERANDA / HOME -->
-    <div id="page-home" class="page active">
-      <div class="navbar">
-        <span class="nav-link" onclick="navigateTo('page-home')">BERANDA</span>
-        <span class="nav-link" onclick="navigateTo('page-tentang')">TENTANG</span>
-        <span class="nav-link" onclick="navigateTo('page-panduan')">PANDUAN</span>
-      </div>
-      <div class="hero-body">
-        <div class="hero-left">
-          <div class="hero-title-box">PANCASILA</div>
-          <div class="subtitle-box">THE CHOICE</div>
-          <div class="box-dashed" style="font-size: 0.85rem; line-height: 1.4;">
-            Sebuah simulasi interaktif untuk melatih penerapan nilai-nilai Pancasila dalam kehidupan sehari-hari
+      <!-- NAVBAR TETAP -->
+      <header class="navbar">
+        <div class="brand-tag">
+          <span>PANCASILA: THE CHOICE</span>
+          <span class="player-chip" id="navbarPlayerChip"><span class="player-name-val">User</span></span>
+        </div>
+        <nav class="nav-links">
+          <span class="nav-link" onclick="navigateTo('page-home')">BERANDA</span>
+          <span class="nav-link" onclick="openModal('modal-tentang')">TENTANG</span>
+          <span class="nav-link" onclick="openModal('modal-panduan')">PANDUAN</span>
+        </nav>
+      </header>
+
+      <!-- VIEWPORT HALAMAN (SINGLE PAGE APPLICATION) -->
+      <main class="page-viewport">
+
+        <!-- =====================================================
+             1. HALAMAN BERANDA / HOME
+             ===================================================== -->
+        <section id="page-home" class="page active">
+          <div class="hero-grid">
+            <div class="hero-left">
+              <div class="hero-title">PANCASILA</div>
+              <div class="badge-pill">THE CHOICE</div>
+              <div class="hero-desc-card">
+                Sebuah simulasi interaktif untuk melatih penerapan nilai-nilai Pancasila dalam memecahkan masalah kehidupan sehari-hari.
+              </div>
+              <button class="btn-pill btn-gold" onclick="navigateTo('page-nama')">
+                Mulai Simulasi 
+              </button>
+            </div>
+            
+            <div class="hero-right">
+              <!-- PLACEHOLDER ILUSTRASI HERO -->
+              <div class="img-slot hero-illustration-box" title="Ganti dengan gambar Anda di: assets/images/hero.png">
+                <img src="assets/images/hero.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Ilustrasi Hero Karakter">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2.5rem;"></span>
+                  <span class="slot-label"></span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div>
-            <div class="btn-wireframe" onclick="navigateTo('page-nama')">Mulai</div>
+        </section>
+
+
+        <!-- =====================================================
+             2. HALAMAN INPUT NAMA PENGGUNA
+             ===================================================== -->
+        <section id="page-nama" class="page">
+          <button class="back-btn" onclick="navigateTo('page-home')" title="Kembali ke Beranda">&lt;</button>
+          
+          <h1 class="heading-chunky">MASUKKAN NAMAMU!</h1>
+          
+          <div class="mac-window">
+            <div class="mac-window-header">
+              <div class="mac-dot red"></div>
+              <div class="mac-dot yellow"></div>
+              <div class="mac-dot green"></div>
+              <span style="font-size: 0.75rem; font-weight: 700; margin-left: 8px; color: #555;">Profil Pemain</span>
+            </div>
+            <div class="mac-window-body">
+              <p style="font-weight: 600; font-size: 0.95rem; margin-bottom: 5px;">Siapa nama panggilanmu?</p>
+              <p style="font-size: 0.8rem; color: #777;">Nama ini akan digunakan selama simulasi studi kasus.</p>
+              
+              <div class="input-wrapper">
+                <input type="text" id="playerNameInput" class="input-name" placeholder="Ketik namamu di sini..." maxlength="25" autofocus>
+              </div>
+
+              <button class="btn-pill btn-gold" onclick="saveNameAndProceed()">
+                Lanjut ke Kasus! 
+              </button>
+            </div>
           </div>
-        </div>
-        <div class="hero-right">
-          <div class="img-placeholder" style="width: 85%; height: 80%;">
-            [ ILUSTRASI HERO / KARAKTER ]
+
+          <div class="stars-rating">  </div>
+        </section>
+
+
+        <!-- =====================================================
+             3. HALAMAN PILIH SKENARIO
+             ===================================================== -->
+        <section id="page-skenario" class="page">
+          <button class="back-btn" onclick="navigateTo('page-nama')" title="Kembali ke Masukkan Nama">&lt;</button>
+          
+          <div class="scenario-header-wrap">
+            <h1 class="heading-chunky">PILIH SKENARIO</h1>
+            <div class="badge-pill sm">PILIH SATU KASUS UNTUK DISELESAIKAN</div>
+            <div class="greeting-text">
+              Halo, <b class="player-name-val" style="color: var(--color-gold);">Teman</b>! Tentukan pilihan dan amalkan nilai Pancasila:
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
+          <br>
+          <div class="scenario-grid">
+            <!-- Kartu Skenario 1 -->
+            <div class="scenario-card" onclick="navigateTo('page-detail-skenario-1')">
+              <div class="img-slot" title="Ganti dengan gambar Anda di: assets/images/kasus-1.png">
+                <img src="assets/images/kasus-1.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Kasus 1">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2rem;"></span>
+                  <span class="slot-label">[ Kasus 1: Perundungan ]</span>
+                  <span class="slot-hint">assets/images/kasus-1.png</span>
+                </div>
+              </div>
+              <div class="card-title-pill">PERUNDUNGAN DI LINGKUNGAN KAMPUS</div>
+            </div>
 
-    <!-- PAGE: TENTANG -->
-    <div id="page-tentang" class="page">
-      <div class="navbar">
-        <span class="nav-link" onclick="navigateTo('page-home')">BERANDA</span>
-        <span class="nav-link" onclick="navigateTo('page-tentang')">TENTANG</span>
-        <span class="nav-link" onclick="navigateTo('page-panduan')">PANDUAN</span>
-      </div>
-      <div class="center-content">
-        <h2>TENTANG SIMULASI</h2>
-        <div class="box-dashed" style="width: 90%; font-size: 0.85rem; text-align: left; line-height: 1.5;">
-          <strong>Pancasila: The Choice</strong> adalah media pembelajaran interaktif berbasis skenario kasus kehidupan nyata.<br><br>
-          Aplikasi ini bertujuan untuk menguji pemahaman pengguna mengenai pengamalan Sila Pancasila dalam menyelesaikan masalah sosial.
-        </div>
-        <div class="btn-wireframe" onclick="navigateTo('page-home')">Kembali ke Beranda</div>
-      </div>
-    </div>
+            <!-- Kartu Skenario 2 -->
+            <div class="scenario-card" onclick="navigateTo('page-detail-skenario-2')">
+              <div class="img-slot" title="Ganti dengan gambar Anda di: assets/images/kasus-2.png">
+                <img src="assets/images/kasus-2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Kasus 2">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2rem;"></span>
+                  <span class="slot-label">[ Kasus 2: Musyawarah ]</span>
+                  <span class="slot-hint">assets/images/kasus-2.png</span>
+                </div>
+              </div>
+              <div class="card-title-pill">PERBEDAAN PENDAPAT DALAM KELOMPOK</div>
+            </div>
 
-    <!-- PAGE: PANDUAN -->
-    <div id="page-panduan" class="page">
-      <div class="navbar">
-        <span class="nav-link" onclick="navigateTo('page-home')">BERANDA</span>
-        <span class="nav-link" onclick="navigateTo('page-tentang')">TENTANG</span>
-        <span class="nav-link" onclick="navigateTo('page-panduan')">PANDUAN</span>
-      </div>
-      <div class="center-content">
-        <h2>PANDUAN PENGGUNAAN</h2>
-        <div class="box-dashed" style="width: 90%; font-size: 0.8rem; text-align: left; line-height: 1.5;">
-          1. Masukkan nama panggilanmu pada halaman awal.<br>
-          2. Pilih salah satu skenario kasus yang ingin kamu selesaikan.<br>
-          3. Baca jalan cerita dengan seksama.<br>
-          4. Pilih Opsi (A, B, atau C) sesuai dengan tindakan yang menurutmu paling tepat.<br>
-          5. Lihat evaluasi hasil dan pengamalan Sila Pancasila dari pilihanmu!
-        </div>
-        <div class="btn-wireframe" onclick="navigateTo('page-home')">Kembali ke Beranda</div>
-      </div>
-    </div>
-
-    <!-- PAGE 2: MASUKKAN NAMA -->
-    <div id="page-nama" class="page">
-      <div class="back-btn" onclick="navigateTo('page-home')">&lt;</div>
-      <div class="center-content">
-        <h2>MASUKKAN NAMAMU!</h2>
-        <div class="modal-window">
-          <div class="modal-header-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <!-- Kartu Skenario 3 -->
+            <div class="scenario-card" onclick="navigateTo('page-detail-skenario-3')">
+              <div class="img-slot" title="Ganti dengan gambar Anda di: assets/images/kasus-3.png">
+                <img src="assets/images/kasus-3.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Kasus 3">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2rem;"></span>
+                  <span class="slot-label">[ Kasus 3: Cek Fakta ]</span>
+                  <span class="slot-hint">assets/images/kasus-3.png</span>
+                </div>
+              </div>
+              <div class="card-title-pill">BERITA YANG BELUM TERVERIFIKASI</div>
+            </div>
           </div>
-          <input type="text" class="input-field" placeholder="Ketik nama di sini..." value="User">
-          <div class="btn-wireframe" onclick="navigateTo('page-skenario')">Lanjut!</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- PAGE 3: PILIH SKENARIO -->
-    <div id="page-skenario" class="page">
-      <br>
-      <br>
-      <br>
-      <br>
-      <br>
-      <div class="back-btn" onclick="navigateTo('page-nama')">&lt;</div>
-      <div class="center-content" style="justify-content: flex-start; padding-top: 20px;">
-        <h2>PILIH SKENARIO</h2>
-        <p style="font-size: 0.8rem;">PILIH SATU KASUS UNTUK DISELESAIKAN</p>
+          <div class="stars-rating">  </div>
+        </section>
 
-        <div class="scenario-grid">
-          <!-- Card 1: Perundungan -->
-          <div class="scenario-card" onclick="navigateTo('page-detail-skenario-1')">
-            <div class="img-placeholder" style="width: 100%; height: 110px;">[ Kasus 1 ]</div>
-            <div style="font-size: 0.7rem; font-weight: bold; text-align: center;">PERUNDUNGAN DI LINGKUNGAN KAMPUS</div>
+
+        <!-- =====================================================
+             4. SKENARIO 1: DETAIL PERUNDUNGAN DI LINGKUNGAN KAMPUS
+             ===================================================== -->
+        <section id="page-detail-skenario-1" class="page">
+          <button class="back-btn" onclick="navigateTo('page-skenario')" title="Pilih Kasus Lain">&lt;</button>
+          
+          <div class="badge-pill">PERUNDUNGAN DI LINGKUNGAN KAMPUS</div>
+
+          <div class="scenario-layout">
+            <div class="narrative-card">
+              <div class="img-slot" title="Ganti dengan gambar Anda di: assets/images/adegan-1.png">
+                <img src="assets/images/adegan-1.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Adegan Perundungan">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 1.8rem;"></span>
+                  <span class="slot-label">[ Adegan Perundungan ]</span>
+                </div>
+              </div>
+              <div class="narrative-text-box">
+                Saat berjalan menuju kelas, kamu melihat seorang mahasiswa sedang duduk sendirian sambil membaca buku. Beberapa mahasiswa lain menghampirinya dan mulai mengejek penampilannya.<br><br>
+                <b>Apa yang akan kamu lakukan, <span class="player-name-val">Teman</span>?</b>
+              </div>
+            </div>
+
+            <div class="options-list">
+              <div class="option-btn" onclick="navigateTo('page-bad-ending-1')">
+                <span class="opt-badge">OPSI A</span>
+                <span>Ikut tertawa dan mengejek agar diterima oleh kelompok tersebut.</span>
+              </div>
+              <div class="option-btn" onclick="navigateTo('page-good-ending-1')">
+                <span class="opt-badge">OPSI B</span>
+                <span>Menegur para pelaku dan membela mahasiswa yang dirundung.</span>
+              </div>
+              <div class="option-btn" onclick="navigateTo('page-neutral-ending-1')">
+                <span class="opt-badge">OPSI C</span>
+                <span>Memilih pergi karena merasa kejadian itu bukan urusanmu.</span>
+              </div>
+            </div>
           </div>
-          <!-- Card 2: Perbedaan Pendapat -->
-          <div class="scenario-card" onclick="navigateTo('page-detail-skenario-2')">
-            <div class="img-placeholder" style="width: 100%; height: 110px;">[ Kasus 2 ]</div>
-            <div style="font-size: 0.7rem; font-weight: bold; text-align: center;">PERBEDAAN PENDAPAT DALAM KELOMPOK</div>
+        </section>
+
+        <!-- Skenario 1: Bad Ending -->
+        <section id="page-bad-ending-1" class="page">
+          <button class="back-btn" onclick="navigateTo('page-detail-skenario-1')" title="Ulangi Pilihan">&lt;</button>
+          <div class="ending-card-container">
+            <div class="ending-left-panel">
+              <div class="img-slot" title="assets/images/bad-1.png">
+                <img src="assets/images/bad-1.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Bad Ending 1">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2rem;"></span>
+                  <span class="slot-label">[ Ilustrasi Opsi A ]</span>
+                </div>
+              </div>
+              <div class="ending-sila-box">
+                BERTENTANGAN DENGAN SILA KE-2 KARENA TIDAK MENGHORMATI MARTABAT ORANG LAIN.
+              </div>
+            </div>
+
+            <div class="ending-result-card bad">
+              <div>
+                <div class="ending-action-title">KAMU IKUT MENGEJEK KORBAN.</div>
+                <div class="ending-desc-box">
+                  Tindakanmu, <b><span class="player-name-val">Teman</span></b>, memperburuk kondisi psikologis korban dan membuat budaya perundungan semakin dinormalisasi di lingkungan kampus.
+                </div>
+                <div class="ending-stamp bad">BAD ENDING...</div>
+              </div>
+              <div>
+                <button class="btn-pill btn-gold" onclick="navigateTo('page-popup-next')">Lanjut Evaluasi </button>
+              </div>
+            </div>
           </div>
-          <!-- Card 3: Berita Belum Terverifikasi -->
-          <div class="scenario-card" onclick="navigateTo('page-detail-skenario-3')">
-            <div class="img-placeholder" style="width: 100%; height: 110px;">[ Kasus 3 ]</div>
-            <div style="font-size: 0.7rem; font-weight: bold; text-align: center;">BERITA YANG BELUM TERVERIFIKASI</div>
+        </section>
+
+        <!-- Skenario 1: Good Ending -->
+        <section id="page-good-ending-1" class="page">
+          <button class="back-btn" onclick="navigateTo('page-detail-skenario-1')" title="Ulangi Pilihan">&lt;</button>
+          <div class="ending-card-container">
+            <div class="ending-left-panel">
+              <div class="img-slot" title="assets/images/good-1.png">
+                <img src="assets/images/good-1.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Good Ending 1">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2rem;"></span>
+                  <span class="slot-label">[ Ilustrasi Opsi B ]</span>
+                </div>
+              </div>
+              <div class="ending-sila-box">
+                MENCERMINKAN SILA KE-2 MELALUI SIKAP BERADAB DAN TENGGANG RASA.
+              </div>
+            </div>
+
+            <div class="ending-result-card good">
+              <div>
+                <div class="ending-action-title">KAMU MEMBELA MAHASISWA YANG DIRUNDUNG.</div>
+                <div class="ending-desc-box">
+                  Luar biasa, <b><span class="player-name-val">Teman</span></b>! Kamu memiliki keberanian moral untuk menghentikan ketidakadilan dan membantu menciptakan rasa aman bagi sesama mahasiswa.
+                </div>
+                <div class="ending-stamp good">GOOD ENDING!</div>
+              </div>
+              <div>
+                <button class="btn-pill btn-gold" onclick="navigateTo('page-popup-next')">Lanjut Evaluasi </button>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div style="margin-top: 10px; font-size: 1.2rem;">★ ★ ★</div>
-      </div>
-    </div>
+        <!-- Skenario 1: Neutral Ending -->
+        <section id="page-neutral-ending-1" class="page">
+          <button class="back-btn" onclick="navigateTo('page-detail-skenario-1')" title="Ulangi Pilihan">&lt;</button>
+          <div class="ending-card-container">
+            <div class="ending-left-panel">
+              <div class="img-slot" title="assets/images/neutral-1.png">
+                <img src="assets/images/neutral-1.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Neutral Ending 1">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2rem;"></span>
+                  <span class="slot-label">[ Ilustrasi Opsi C ]</span>
+                </div>
+              </div>
+              <div class="ending-sila-box">
+                BELUM MENUNJUKKAN PENGAMALAN AKTIF SILA KE-2.
+              </div>
+            </div>
 
-
-    <!-- ========================================== -->
-    <!-- SKENARIO 1: PERUNDUNGAN -->
-    <!-- ========================================== -->
-    <div id="page-detail-skenario-1" class="page">
-      <br>
-      <br>
-      <br>
-      <br>
-      <div class="back-btn" onclick="navigateTo('page-skenario')">&lt;</div>
-      <h3 style="text-align: center; margin-top: 20px; font-size: 0.95rem;">PERUNDUNGAN DI LINGKUNGAN KAMPUS</h3>
-      <div class="scenario-detail">
-        <div class="img-placeholder" style="width: 35%; height: 130px;">[ Gambar ]</div>
-        <div class="box-dashed" style="width: 65%; height: 130px; font-size: 0.75rem; text-align: left; overflow-y: auto;">
-          Saat berjalan menuju kelas, kamu melihat seorang mahasiswa sedang duduk sendirian sambil membaca buku. Beberapa mahasiswa lain menghampirinya dan mulai mengejek penampilannya.<br><br>Apa yang akan kamu lakukan?
-        </div>
-      </div>
-      <div class="options-container">
-        <div class="option-btn" onclick="navigateTo('page-bad-ending-1')">OPSI A: Ikut tertawa dan mengejek agar diterima oleh kelompok tersebut.</div>
-        <div class="option-btn" onclick="navigateTo('page-good-ending-1')">OPSI B: Menegur para pelaku dan membela mahasiswa yang dirundung.</div>
-        <div class="option-btn" onclick="navigateTo('page-neutral-ending-1')">OPSI C: Memilih pergi karena merasa kejadian itu bukan urusanmu.</div>
-      </div>
-    </div>
-
-    <!-- Ending Skenario 1 -->
-    <div id="page-bad-ending-1" class="page">
-      <div class="back-btn" onclick="navigateTo('page-detail-skenario-1')">&lt;</div>
-      <div class="ending-container">
-        <div class="ending-left">
-          <div class="img-placeholder" style="height: 150px;">[ Opsi A ]</div>
-          <div class="box-dashed" style="font-size: 0.65rem;">BERTENTANGAN DENGAN SILA KE-2 KARENA TIDAK MENGHORMATI MARTABAT ORANG LAIN.</div>
-        </div>
-        <div class="ending-right">
-          <div style="font-weight: bold; font-size: 0.95rem;">KAMU IKUT MENGEJEK KORBAN.</div>
-          <div class="box-dashed" style="font-size: 0.75rem;">Tindakanmu memperburuk kondisi korban dan membuat perundungan semakin dinormalisasi.</div>
-          <h1 style="font-size: 1.8rem;">BAD ENDING...</h1>
-          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
-        </div>
-      </div>
-    </div>
-
-    <div id="page-good-ending-1" class="page">
-      <div class="back-btn" onclick="navigateTo('page-detail-skenario-1')">&lt;</div>
-      <div class="ending-container">
-        <div class="ending-left">
-          <div class="img-placeholder" style="height: 150px;">[ Opsi B ]</div>
-          <div class="box-dashed" style="font-size: 0.65rem;">MENCERMINKAN SILA KE-2 MELALUI SIKAP BERADAB DAN TENGGANG RASA.</div>
-        </div>
-        <div class="ending-right">
-          <div style="font-weight: bold; font-size: 0.95rem;">KAMU MEMBELA MAHASISWA YANG DIRUNDUNG.</div>
-          <div class="box-dashed" style="font-size: 0.75rem;">Kamu berani menghentikan perundungan dan membantu menciptakan lingkungan kampus yang aman.</div>
-          <h1 style="font-size: 1.8rem;">GOOD ENDING!</h1>
-          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
-        </div>
-      </div>
-    </div>
-
-    <div id="page-neutral-ending-1" class="page">
-      <div class="back-btn" onclick="navigateTo('page-detail-skenario-1')">&lt;</div>
-      <div class="ending-container">
-        <div class="ending-left">
-          <div class="img-placeholder" style="height: 150px;">[ Opsi C ]</div>
-          <div class="box-dashed" style="font-size: 0.65rem;">BELUM MENUNJUKKAN PENGAMALAN AKTIF SILA KE-2.</div>
-        </div>
-        <div class="ending-right">
-          <div style="font-weight: bold; font-size: 0.95rem;">KAMU MEMILIH PERGI.</div>
-          <div class="box-dashed" style="font-size: 0.75rem;">Kamu tidak ikut melakukan perundungan, tetapi tidak berusaha membantu korban.</div>
-          <h1 style="font-size: 1.8rem;">NEUTRAL ENDING</h1>
-          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- ========================================== -->
-    <!-- SKENARIO 2: PERBEDAAN PENDAPAT -->
-    <!-- ========================================== -->
-    <div id="page-detail-skenario-2" class="page">
-      <br>
-      <br>
-      <br>
-      <br>
-      <div class="back-btn" onclick="navigateTo('page-skenario')">&lt;</div>
-      <h3 style="text-align: center; margin-top: 20px; font-size: 0.95rem;">PERBEDAAN PENDAPAT DALAM KELOMPOK</h3>
-      <div class="scenario-detail">
-        <div class="img-placeholder" style="width: 35%; height: 130px;">[ Gambar ]</div>
-        <div class="box-dashed" style="width: 65%; height: 130px; font-size: 0.75rem; text-align: left; overflow-y: auto;">
-          Kamu sedang mengerjakan tugas bersama empat teman. Ketua kelompok bersikeras menggunakan idenya sendiri dan menolak pendapat anggota lain. Suasana diskusi memanas. Apa yang akan kamu lakukan?
-        </div>
-      </div>
-      <div class="options-container">
-        <div class="option-btn" onclick="navigateTo('page-neutral-ending-2')">OPSI A: Mengikuti saja keputusan ketua agar diskusi cepat selesai.</div>
-        <div class="option-btn" onclick="navigateTo('page-good-ending-2')">OPSI B: Mengajak seluruh anggota berdiskusi dan mencari keputusan bersama.</div>
-        <div class="option-btn" onclick="navigateTo('page-bad-ending-2')">OPSI C: Memaksakan ide sendiri karena merasa pendapatmu paling benar.</div>
-      </div>
-    </div>
-
-    <!-- Ending Skenario 2 -->
-    <div id="page-neutral-ending-2" class="page">
-      <div class="back-btn" onclick="navigateTo('page-detail-skenario-2')">&lt;</div>
-      <div class="ending-container">
-        <div class="ending-left">
-          <div class="img-placeholder" style="height: 150px;">[ Opsi A ]</div>
-          <div class="box-dashed" style="font-size: 0.65rem;">BELUM MENCERMINKAN SILA KE-4 SECARA OPTIMAL.</div>
-        </div>
-        <div class="ending-right">
-          <div style="font-weight: bold; font-size: 0.95rem;">KAMU MENGIKUTI KEPUTUSAN KETUA.</div>
-          <div class="box-dashed" style="font-size: 0.75rem;">Diskusi cepat selesai, tetapi keputusan tidak melibatkan seluruh anggota.</div>
-          <h1 style="font-size: 1.8rem;">NEUTRAL ENDING</h1>
-          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
-        </div>
-      </div>
-    </div>
-
-    <div id="page-good-ending-2" class="page">
-      <div class="back-btn" onclick="navigateTo('page-detail-skenario-2')">&lt;</div>
-      <div class="ending-container">
-        <div class="ending-left">
-          <div class="img-placeholder" style="height: 150px;">[ Opsi B ]</div>
-          <div class="box-dashed" style="font-size: 0.65rem;">MENCERMINKAN SILA KE-4 MELALUI MUSYAWARAH.</div>
-        </div>
-        <div class="ending-right">
-          <div style="font-weight: bold; font-size: 0.95rem;">KAMU MENGAJAK ANGGOTA BERDISKUSI.</div>
-          <div class="box-dashed" style="font-size: 0.75rem;">Kelompok mempertimbangkan berbagai ide dan mencapai kesepakatan bersama.</div>
-          <h1 style="font-size: 1.8rem;">GOOD ENDING!</h1>
-          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
-        </div>
-      </div>
-    </div>
-
-    <div id="page-bad-ending-2" class="page">
-      <div class="back-btn" onclick="navigateTo('page-detail-skenario-2')">&lt;</div>
-      <div class="ending-container">
-        <div class="ending-left">
-          <div class="img-placeholder" style="height: 150px;">[ Opsi C ]</div>
-          <div class="box-dashed" style="font-size: 0.65rem;">BERTENTANGAN DENGAN SILA KE-4.</div>
-        </div>
-        <div class="ending-right">
-          <div style="font-weight: bold; font-size: 0.95rem;">KAMU MEMAKSAKAN IDE SENDIRI.</div>
-          <div class="box-dashed" style="font-size: 0.75rem;">Diskusi berubah menjadi konflik dan kerja sama kelompok terganggu.</div>
-          <h1 style="font-size: 1.8rem;">BAD ENDING..</h1>
-          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- ========================================== -->
-    <!-- SKENARIO 3: BERITA BELUM TERVERIFIKASI -->
-    <!-- ========================================== -->
-    <div id="page-detail-skenario-3" class="page">
-      <br>
-      <br>
-      <br>
-      <br>
-      <div class="back-btn" onclick="navigateTo('page-skenario')">&lt;</div>
-      <h3 style="text-align: center; margin-top: 20px; font-size: 0.95rem;">BERITA YANG BELUM TERVERIFIKASI</h3>
-      <div class="scenario-detail">
-        <div class="img-placeholder" style="width: 35%; height: 130px;">[ Gambar ]</div>
-        <div class="box-dashed" style="width: 65%; height: 130px; font-size: 0.75rem; text-align: left; overflow-y: auto;">
-          Kamu menerima pesan berantai di grup mahasiswa berisi kabar bahwa salah satu dosen melakukan tindakan tidak pantas tanpa sumber yang jelas. Temanmu mulai membagikannya. Apa yang akan kamu lakukan?
-        </div>
-      </div>
-      <div class="options-container">
-        <div class="option-btn" onclick="navigateTo('page-bad-ending-3')">OPSI A: Langsung membagikan berita tersebut agar semakin banyak orang tahu.</div>
-        <div class="option-btn" onclick="navigateTo('page-good-ending-3')">OPSI B: Memeriksa kebenaran informasi melalui sumber resmi sebelum percaya.</div>
-        <div class="option-btn" onclick="navigateTo('page-neutral-ending-3')">OPSI C: Mengabaikan berita tersebut tanpa mencari tahu kebenarannya.</div>
-      </div>
-    </div>
-
-    <!-- Ending Skenario 3 -->
-    <div id="page-bad-ending-3" class="page">
-      <div class="back-btn" onclick="navigateTo('page-detail-skenario-3')">&lt;</div>
-      <div class="ending-container">
-        <div class="ending-left">
-          <div class="img-placeholder" style="height: 150px;">[ Opsi A ]</div>
-          <div class="box-dashed" style="font-size: 0.65rem;">BERTENTANGAN DENGAN SILA KE-2 DAN KE-4.</div>
-        </div>
-        <div class="ending-right">
-          <div style="font-weight: bold; font-size: 0.95rem;">MENYEBARKAN BERITA TANPA VERIFIKASI.</div>
-          <div class="box-dashed" style="font-size: 0.75rem;">Nama baik dosen tercemar dan menimbulkan kesalahpahaman di kampus.</div>
-          <h1 style="font-size: 1.8rem;">BAD ENDING..</h1>
-          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
-        </div>
-      </div>
-    </div>
-
-    <div id="page-good-ending-3" class="page">
-      <div class="back-btn" onclick="navigateTo('page-detail-skenario-3')">&lt;</div>
-      <div class="ending-container">
-        <div class="ending-left">
-          <div class="img-placeholder" style="height: 150px;">[ Opsi B ]</div>
-          <div class="box-dashed" style="font-size: 0.65rem;">MENCERMINKAN SILA KE-2 DAN KE-4.</div>
-        </div>
-        <div class="ending-right">
-          <div style="font-weight: bold; font-size: 0.95rem;">MEMERIKSA KEBENARAN INFORMASI TERLEBIH DAHULU.</div>
-          <div class="box-dashed" style="font-size: 0.75rem;">Penyebaran informasi yang menyesatkan dapat dicegah dan kamu mengingatkan teman.</div>
-          <h1 style="font-size: 1.8rem;">GOOD ENDING!</h1>
-          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
-        </div>
-      </div>
-    </div>
-
-    <div id="page-neutral-ending-3" class="page">
-      <div class="back-btn" onclick="navigateTo('page-detail-skenario-3')">&lt;</div>
-      <div class="ending-container">
-        <div class="ending-left">
-          <div class="img-placeholder" style="height: 150px;">[ Opsi C ]</div>
-          <div class="box-dashed" style="font-size: 0.65rem;">BELUM MENUNJUKKAN KEPEDULIAN AKTIF.</div>
-        </div>
-        <div class="ending-right">
-          <div style="font-weight: bold; font-size: 0.95rem;">MENGABAIKAN BERITA TANPA MENCARI TAHU.</div>
-          <div class="box-dashed" style="font-size: 0.75rem;">Informasi belum terverifikasi tetap beredar karena tidak ada upaya meluruskan.</div>
-          <h1 style="font-size: 1.8rem;">NEUTRAL ENDING</h1>
-          <div class="btn-wireframe" onclick="navigateTo('page-popup-next')">Lanjut &gt;</div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- ========================================== -->
-    <!-- POPUP & TERIMA KASIH -->
-    <!-- ========================================== -->
-    <div id="page-popup-next" class="page">
-      <div class="back-btn" onclick="navigateTo('page-skenario')">&lt;</div>
-      <div class="center-content">
-        <div class="modal-window">
-          <div class="modal-header-dots">
-            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <div class="ending-result-card neutral">
+              <div>
+                <div class="ending-action-title">KAMU MEMILIH PERGI.</div>
+                <div class="ending-desc-box">
+                  Kamu memang tidak ikut melakukan perundungan, <b><span class="player-name-val">Teman</span></b>, tetapi sikap pasif membiarkan korban tetap tertindas tanpa bantuan.
+                </div>
+                <div class="ending-stamp neutral">NEUTRAL ENDING</div>
+              </div>
+              <div>
+                <button class="btn-pill btn-gold" onclick="navigateTo('page-popup-next')">Lanjut Evaluasi </button>
+              </div>
+            </div>
           </div>
-          <h3 style="margin: 10px 0; font-size: 1rem;">INGIN MENCOBA SKENARIO LAIN?</h3>
-          <div style="display: flex; gap: 15px;">
-            <div class="btn-wireframe" onclick="navigateTo('page-skenario')">PILIH SKENARIO</div>
-            <div class="btn-wireframe" onclick="navigateTo('page-terima-kasih')">AKHIRI</div>
+        </section>
+
+
+        <!-- =====================================================
+             5. SKENARIO 2: PERBEDAAN PENDAPAT DALAM KELOMPOK
+             ===================================================== -->
+        <section id="page-detail-skenario-2" class="page">
+          <button class="back-btn" onclick="navigateTo('page-skenario')" title="Pilih Kasus Lain">&lt;</button>
+          
+          <div class="badge-pill">PERBEDAAN PENDAPAT DALAM KELOMPOK</div>
+
+          <div class="scenario-layout">
+            <div class="narrative-card">
+              <div class="img-slot" title="assets/images/adegan-2.png">
+                <img src="assets/images/adegan-2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Adegan Diskusi">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 1.8rem;"></span>
+                  <span class="slot-label">[ Adegan Diskusi Kelompok ]</span>
+                </div>
+              </div>
+              <div class="narrative-text-box">
+                Kamu sedang mengerjakan tugas bersama empat teman. Ketua kelompok bersikeras menggunakan idenya sendiri dan menolak pendapat anggota lain. Suasana diskusi memanas.<br><br>
+                <b>Apa yang akan kamu lakukan, <span class="player-name-val">Teman</span>?</b>
+              </div>
+            </div>
+
+            <div class="options-list">
+              <div class="option-btn" onclick="navigateTo('page-neutral-ending-2')">
+                <span class="opt-badge">OPSI A</span>
+                <span>Mengikuti saja keputusan ketua agar diskusi cepat selesai.</span>
+              </div>
+              <div class="option-btn" onclick="navigateTo('page-good-ending-2')">
+                <span class="opt-badge">OPSI B</span>
+                <span>Mengajak seluruh anggota berdiskusi dan mencari keputusan bersama.</span>
+              </div>
+              <div class="option-btn" onclick="navigateTo('page-bad-ending-2')">
+                <span class="opt-badge">OPSI C</span>
+                <span>Memaksakan ide sendiri karena merasa pendapatmu paling benar.</span>
+              </div>
+            </div>
           </div>
-        </div>
-        <div style="margin-top: 10px; font-size: 1.2rem;">★ ★ ★</div>
-      </div>
+        </section>
+
+        <!-- Skenario 2: Neutral Ending (Opsi A) -->
+        <section id="page-neutral-ending-2" class="page">
+          <button class="back-btn" onclick="navigateTo('page-detail-skenario-2')" title="Ulangi Pilihan">&lt;</button>
+          <div class="ending-card-container">
+            <div class="ending-left-panel">
+              <div class="img-slot" title="assets/images/neutral-2.png">
+                <img src="assets/images/neutral-2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Neutral Ending 2">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2rem;"></span>
+                  <span class="slot-label">[ Ilustrasi Opsi A ]</span>
+                </div>
+              </div>
+              <div class="ending-sila-box">
+                BELUM MENCERMINKAN SILA KE-4 SECARA OPTIMAL.
+              </div>
+            </div>
+
+            <div class="ending-result-card neutral">
+              <div>
+                <div class="ending-action-title">KAMU MENGIKUTI KEPUTUSAN KETUA.</div>
+                <div class="ending-desc-box">
+                  Diskusi memang lekas selesai, <b><span class="player-name-val">Teman</span></b>, namun keputusan diambil secara otoriter dan menyingkirkan aspirasi anggota lain.
+                </div>
+                <div class="ending-stamp neutral">NEUTRAL ENDING</div>
+              </div>
+              <div>
+                <button class="btn-pill btn-gold" onclick="navigateTo('page-popup-next')">Lanjut Evaluasi </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Skenario 2: Good Ending (Opsi B) -->
+        <section id="page-good-ending-2" class="page">
+          <button class="back-btn" onclick="navigateTo('page-detail-skenario-2')" title="Ulangi Pilihan">&lt;</button>
+          <div class="ending-card-container">
+            <div class="ending-left-panel">
+              <div class="img-slot" title="assets/images/good-2.png">
+                <img src="assets/images/good-2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Good Ending 2">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2rem;"></span>
+                  <span class="slot-label">[ Ilustrasi Opsi B ]</span>
+                </div>
+              </div>
+              <div class="ending-sila-box">
+                MENCERMINKAN SILA KE-4 MELALUI MUSYAWARAH UNTUK MUFAKAT.
+              </div>
+            </div>
+
+            <div class="ending-result-card good">
+              <div>
+                <div class="ending-action-title">KAMU MENGAJAK ANGGOTA BERDISKUSI.</div>
+                <div class="ending-desc-box">
+                  Hebat sekali, <b><span class="player-name-val">Teman</span></b>! Berkat inisiatifmu, kelompok dapat saling menghargai ide dan mencapai kesepakatan terbaik secara demokratis.
+                </div>
+                <div class="ending-stamp good">GOOD ENDING!</div>
+              </div>
+              <div>
+                <button class="btn-pill btn-gold" onclick="navigateTo('page-popup-next')">Lanjut Evaluasi </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Skenario 2: Bad Ending (Opsi C) -->
+        <section id="page-bad-ending-2" class="page">
+          <button class="back-btn" onclick="navigateTo('page-detail-skenario-2')" title="Ulangi Pilihan">&lt;</button>
+          <div class="ending-card-container">
+            <div class="ending-left-panel">
+              <div class="img-slot" title="assets/images/bad-2.png">
+                <img src="assets/images/bad-2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Bad Ending 2">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2rem;"></span>
+                  <span class="slot-label">[ Ilustrasi Opsi C ]</span>
+                </div>
+              </div>
+              <div class="ending-sila-box">
+                BERTENTANGAN DENGAN SILA KE-4 KARENA EGOIS DAN MEMAKSAKAN KEHENDAK.
+              </div>
+            </div>
+
+            <div class="ending-result-card bad">
+              <div>
+                <div class="ending-action-title">KAMU MEMAKSAKAN IDE SENDIRI.</div>
+                <div class="ending-desc-box">
+                  Sikap keras kepalamu, <b><span class="player-name-val">Teman</span></b>, memperkeruh suasana menjadi pertengkaran hebat dan merusak solidaritas tim.
+                </div>
+                <div class="ending-stamp bad">BAD ENDING..</div>
+              </div>
+              <div>
+                <button class="btn-pill btn-gold" onclick="navigateTo('page-popup-next')">Lanjut Evaluasi </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- =====================================================
+             6. SKENARIO 3: BERITA BELUM TERVERIFIKASI
+             ===================================================== -->
+        <section id="page-detail-skenario-3" class="page">
+          <button class="back-btn" onclick="navigateTo('page-skenario')" title="Pilih Kasus Lain">&lt;</button>
+          
+          <div class="badge-pill">BERITA YANG BELUM TERVERIFIKASI</div>
+
+          <div class="scenario-layout">
+            <div class="narrative-card">
+              <div class="img-slot" title="assets/images/adegan-3.png">
+                <img src="assets/images/adegan-3.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Adegan Pesan Berantai">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 1.8rem;"></span>
+                  <span class="slot-label">[ Adegan Pesan Berantai ]</span>
+                </div>
+              </div>
+              <div class="narrative-text-box">
+                Kamu menerima pesan berantai di grup mahasiswa berisi kabar bahwa salah satu dosen melakukan tindakan tidak pantas tanpa sumber resmi. Temanmu mulai menyebarkannya.<br><br>
+                <b>Apa yang akan kamu lakukan, <span class="player-name-val">Teman</span>?</b>
+              </div>
+            </div>
+
+            <div class="options-list">
+              <div class="option-btn" onclick="navigateTo('page-bad-ending-3')">
+                <span class="opt-badge">OPSI A</span>
+                <span>Langsung membagikan berita tersebut agar semakin banyak orang tahu.</span>
+              </div>
+              <div class="option-btn" onclick="navigateTo('page-good-ending-3')">
+                <span class="opt-badge">OPSI B</span>
+                <span>Memeriksa kebenaran informasi melalui sumber resmi sebelum percaya.</span>
+              </div>
+              <div class="option-btn" onclick="navigateTo('page-neutral-ending-3')">
+                <span class="opt-badge">OPSI C</span>
+                <span>Mengabaikan berita tersebut tanpa mencari tahu kebenarannya.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Skenario 3: Bad Ending (Opsi A) -->
+        <section id="page-bad-ending-3" class="page">
+          <button class="back-btn" onclick="navigateTo('page-detail-skenario-3')" title="Ulangi Pilihan">&lt;</button>
+          <div class="ending-card-container">
+            <div class="ending-left-panel">
+              <div class="img-slot" title="assets/images/bad-3.png">
+                <img src="assets/images/bad-3.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Bad Ending 3">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2rem;"></span>
+                  <span class="slot-label">[ Ilustrasi Opsi A ]</span>
+                </div>
+              </div>
+              <div class="ending-sila-box">
+                BERTENTANGAN DENGAN SILA KE-2 DAN SILA KE-4.
+              </div>
+            </div>
+
+            <div class="ending-result-card bad">
+              <div>
+                <div class="ending-action-title">MENYEBARKAN BERITA TANPA VERIFIKASI.</div>
+                <div class="ending-desc-box">
+                  Penyebaran fitnah olehmu, <b><span class="player-name-val">Teman</span></b>, mencemarkan nama baik orang lain dan menyulut kepanikan serta saling tuduh di lingkungan kampus.
+                </div>
+                <div class="ending-stamp bad">BAD ENDING..</div>
+              </div>
+              <div>
+                <button class="btn-pill btn-gold" onclick="navigateTo('page-popup-next')">Lanjut Evaluasi </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Skenario 3: Good Ending (Opsi B) -->
+        <section id="page-good-ending-3" class="page">
+          <button class="back-btn" onclick="navigateTo('page-detail-skenario-3')" title="Ulangi Pilihan">&lt;</button>
+          <div class="ending-card-container">
+            <div class="ending-left-panel">
+              <div class="img-slot" title="assets/images/good-3.png">
+                <img src="assets/images/good-3.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Good Ending 3">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2rem;"></span>
+                  <span class="slot-label">[ Ilustrasi Opsi B ]</span>
+                </div>
+              </div>
+              <div class="ending-sila-box">
+                MENCERMINKAN SILA KE-2 DAN SILA KE-4.
+              </div>
+            </div>
+
+            <div class="ending-result-card good">
+              <div>
+                <div class="ending-action-title">MEMERIKSA KEBENARAN INFORMASI DAHULU.</div>
+                <div class="ending-desc-box">
+                  Langkah cerdas, <b><span class="player-name-val">Teman</span></b>! Kamu berhasil menyetop penyebaran hoaks berbahaya dan mengingatkan teman agar selalu berpikir kritis berkeadaban.
+                </div>
+                <div class="ending-stamp good">GOOD ENDING!</div>
+              </div>
+              <div>
+                <button class="btn-pill btn-gold" onclick="navigateTo('page-popup-next')">Lanjut Evaluasi </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Skenario 3: Neutral Ending (Opsi C) -->
+        <section id="page-neutral-ending-3" class="page">
+          <button class="back-btn" onclick="navigateTo('page-detail-skenario-3')" title="Ulangi Pilihan">&lt;</button>
+          <div class="ending-card-container">
+            <div class="ending-left-panel">
+              <div class="img-slot" title="assets/images/neutral-3.png">
+                <img src="assets/images/neutral-3.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Neutral Ending 3">
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                  <span style="font-size: 2rem;"></span>
+                  <span class="slot-label">[ Ilustrasi Opsi C ]</span>
+                </div>
+              </div>
+              <div class="ending-sila-box">
+                BELUM MENUNJUKKAN KEPEDULIAN AKTIF TERHADAP KEBENARAN.
+              </div>
+            </div>
+
+            <div class="ending-result-card neutral">
+              <div>
+                <div class="ending-action-title">MENGABAIKAN BERITA BEGITU SAJA.</div>
+                <div class="ending-desc-box">
+                  Kamu tidak ikut menyebarkan kabar bohong, <b><span class="player-name-val">Teman</span></b>, namun rumor palsu tetap merajalela karena tidak ada upaya edukasi dan verifikasi.
+                </div>
+                <div class="ending-stamp neutral">NEUTRAL ENDING</div>
+              </div>
+              <div>
+                <button class="btn-pill btn-gold" onclick="navigateTo('page-popup-next')">Lanjut Evaluasi </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- =====================================================
+             7. POPUP / DIALOG PILIH SKENARIO LAIN
+             ===================================================== -->
+        <section id="page-popup-next" class="page">
+          <div class="mac-window">
+            <div class="mac-window-header">
+              <div class="mac-dot red"></div>
+              <div class="mac-dot yellow"></div>
+              <div class="mac-dot green"></div>
+              <span style="font-size: 0.75rem; font-weight: 700; margin-left: 8px; color: #555;">Evaluasi Selesai</span>
+            </div>
+            <div class="mac-window-body">
+              <h2 style="font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 8px;">
+                INGIN MENCOBA SKENARIO LAIN?
+              </h2>
+              <p style="font-size: 0.88rem; color: #555; margin-bottom: 20px;">
+                Pilihanmu telah tercatat, <b><span class="player-name-val">Teman</span></b>. Kamu bisa menguji pemahaman di kasus lain atau menyelesaikan simulasi.
+              </p>
+
+              <div style="display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;">
+                <button class="btn-pill btn-gold" onclick="navigateTo('page-skenario')">
+                  Pilih Skenario Lain 
+                </button>
+                <button class="btn-pill" onclick="navigateTo('page-terima-kasih')">
+                  Akhiri Simulasi
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="stars-rating">  </div>
+        </section>
+
+
+        <!-- =====================================================
+             8. HALAMAN TERIMA KASIH (CLOSING)
+             ===================================================== -->
+        <section id="page-terima-kasih" class="page">
+          <div class="thanks-card">
+            <h1 class="heading-chunky" style="color: var(--color-dark); text-shadow: none;">TERIMA KASIH!</h1>
+            <div class="badge-pill">
+              TELAH MENGIKUTI SIMULASI PANCASILA: THE CHOICE
+            </div>
+            <p style="font-size: 0.95rem; line-height: 1.5; font-weight: 500;">
+              Terima kasih atas partisipasimu, <b><span class="player-name-val">Teman</span></b>! Nilai-nilai Pancasila bukan sekadar hafalan teks kenegaraan, melainkan pedoman nyata untuk bersikap adil, beradab, dan bijaksana dalam setiap keputusan hidupmu.
+            </p>
+            
+            <div style="display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; justify-content: center;">
+              <button class="btn-pill btn-gold" onclick="navigateTo('page-skenario')">
+                Ulangi Simulasi 
+              </button>
+              <button class="btn-pill" onclick="navigateTo('page-home')">
+                Menu Utama 
+              </button>
+            </div>
+          </div>
+          <div class="stars-rating">  </div>
+        </section>
+
+      </main>
     </div>
 
-    <div id="page-terima-kasih" class="page">
-      <div class="navbar">
-        <span class="nav-link" onclick="navigateTo('page-home')">BERANDA</span>
-        <span class="nav-link" onclick="navigateTo('page-tentang')">TENTANG</span>
-        <span class="nav-link" onclick="navigateTo('page-panduan')">PANDUAN</span>
+    <!-- DOCK CONTROLLER: MUSIK & FULLSCREEN -->
+    <div class="toolbar-dock">
+      <div class="tool-pill" onclick="toggleLocalMusic()" title="Nyalakan / Matikan Musik Latar">
+        <span>Musik:</span>
+        <span id="musicStatusText">Play</span>
+        <span style="display: inline-flex; align-items: flex-end; gap: 2px; height: 14px;">
+          <span class="eq-bar" id="eq1"></span>
+          <span class="eq-bar" id="eq2"></span>
+          <span class="eq-bar" id="eq3"></span>
+        </span>
       </div>
-      <div class="center-content">
-        <h1 style="font-size: 2rem; letter-spacing: 2px;">TERIMA KASIH!</h1>
-        <p style="font-weight: bold; font-size: 0.9rem;">TELAH MENGIKUTI SIMULASI PANCASILA THE CHOICE</p>
-        
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px; width: 220px;">
-          <div class="btn-wireframe" onclick="navigateTo('page-skenario')">ULANG SIMULASI</div>
-          <div class="btn-wireframe" onclick="navigateTo('page-home')">MENU Utama</div>
-        </div>
+
+      <div class="tool-pill" onclick="toggleFullscreenCanvas()" title="Mode Layar Penuh">
+        <span>Layar Penuh</span>
       </div>
     </div>
-
   </div>
 
-  <!-- PEMUTAR MUSIK MP3 LOKAL (DI POJOK KANAN BAWAH) -->
-  <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: #fff; border: 2px solid #000; padding: 10px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px; box-shadow: 3px 3px 0px #000;">
-    <span style="font-weight: bold; font-size: 0.85rem;">🎵 Musik:</span>
-    <button id="music-btn" onclick="toggleLocalMusic()" class="btn-wireframe" style="padding: 4px 12px; font-size: 0.8rem;">▶ Play</button>
+
+  <!-- =========================================================
+       MODAL OVERLAYS (TENTANG & PANDUAN)
+       ========================================================= -->
+  <!-- MODAL TENTANG -->
+  <div id="modal-tentang" class="overlay-modal" onclick="closeModalOnBackdrop(event, 'modal-tentang')">
+    <div class="mac-window">
+      <div class="mac-window-header">
+        <div class="mac-dot red" style="cursor: pointer;" onclick="closeModal('modal-tentang')"></div>
+        <div class="mac-dot yellow"></div>
+        <div class="mac-dot green"></div>
+        <span style="font-size: 0.8rem; font-weight: 700; margin-left: 8px;">Tentang Aplikasi</span>
+      </div>
+      <div class="mac-window-body" style="text-align: left; align-items: flex-start;">
+        <h2 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--color-dark); margin-bottom: 12px;">
+          TENTANG SIMULASI PANCASILA
+        </h2>
+        <div style="font-size: 0.9rem; line-height: 1.6; color: var(--color-text-dark);">
+          <p><strong>Pancasila: The Choice</strong> adalah media pembelajaran interaktif berbasis skenario kasus kehidupan nyata di lingkungan pendidikan tinggi dan masyarakat.</p>
+          <br>
+          <p>Tujuan utama aplikasi ini adalah melatih daya nalar kritis dan empati moral mahasiswa dalam mengamalkan butir-butir Sila Pancasila (terutama Sila ke-2 Kemanusiaan dan Sila ke-4 Musyawarah) saat berhadapan dengan situasi dilematis.</p>
+        </div>
+        <div style="margin-top: 20px; align-self: center;">
+          <button class="btn-pill btn-gold" onclick="closeModal('modal-tentang')">Tutup Jendela</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- ELEMEN AUDIO HTML5 -->
-  <audio id="bg-music" src="/assets/lagu.mp3" loop></audio>
+  <!-- MODAL PANDUAN -->
+  <div id="modal-panduan" class="overlay-modal" onclick="closeModalOnBackdrop(event, 'modal-panduan')">
+    <div class="mac-window">
+      <div class="mac-window-header">
+        <div class="mac-dot red" style="cursor: pointer;" onclick="closeModal('modal-panduan')"></div>
+        <div class="mac-dot yellow"></div>
+        <div class="mac-dot green"></div>
+        <span style="font-size: 0.8rem; font-weight: 700; margin-left: 8px;">Panduan Simulasi</span>
+      </div>
+      <div class="mac-window-body" style="text-align: left; align-items: flex-start;">
+        <h2 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--color-dark); margin-bottom: 12px;">
+          PANDUAN PENGGUNAAN
+        </h2>
+        <div style="font-size: 0.88rem; line-height: 1.6; color: var(--color-text-dark);">
+          <ol style="padding-left: 20px;">
+            <li><strong>Masukkan Nama Panggilan:</strong> Berikan namamu agar simulasi dapat menyapa secara personal.</li>
+            <li><strong>Pilih Skenario Kasus:</strong> Pilih salah satu permasalahan sosial yang ingin kamu telaah.</li>
+            <li><strong>Pahami Cerita:</strong> Cermati dinamika konflik dan dampak sosial yang sedang terjadi.</li>
+            <li><strong>Ambil Keputusan:</strong> Pilih Opsi A, B, atau C sesuai dengan tindakan yang menurutmu paling bertanggung jawab.</li>
+            <li><strong>Pelajari Refleksi Sila:</strong> Baca penjelasan pengamalan Sila Pancasila yang didapat dari pilihanmu!</li>
+          </ol>
+        </div>
+        <div style="margin-top: 20px; align-self: center;">
+          <button class="btn-pill btn-gold" onclick="closeModal('modal-panduan')">Mengerti</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- JAVASCRIPT NAVIGASI & MUSIK LOKAL -->
+
+  <!-- =========================================================
+       AUDIO ELEMENT (MENGGUNAKAN assets/lagu.mp3)
+       ========================================================= -->
+  <audio id="bg-music" src="assets/lagu.mp3" loop preload="auto"></audio>
+
+
+  <!-- =========================================================
+       JAVASCRIPT LOGIC
+       ========================================================= -->
   <script>
+    // GLOBAL STATE
+    let currentPlayerName = "User";
+
+    // 1. NAVIGATION ENGINE
     function navigateTo(pageId) {
       const pages = document.querySelectorAll('.page');
-      pages.forEach(page => page.classList.remove('active'));
+      pages.forEach(p => p.classList.remove('active'));
 
       const targetPage = document.getElementById(pageId);
       if (targetPage) {
         targetPage.classList.add('active');
+        // Reset scroll viewport ke atas
+        const viewport = document.querySelector('.page-viewport');
+        if (viewport) viewport.scrollTop = 0;
       }
     }
 
+    // 2. PLAYER NAME LOGIC
+    function saveNameAndProceed() {
+      const input = document.getElementById('playerNameInput');
+      const val = input.value.trim();
+
+      if (val.length === 0) {
+        alert("Silakan masukkan nama panggilanmu terlebih dahulu!");
+        input.focus();
+        return;
+      }
+
+      currentPlayerName = val;
+      
+      // Update semua text span yang menampilkan nama pemain
+      const nameHolders = document.querySelectorAll('.player-name-val');
+      nameHolders.forEach(el => el.innerText = currentPlayerName);
+
+      // Tampilkan chip pemain di navbar
+      const chip = document.getElementById('navbarPlayerChip');
+      if (chip) chip.style.display = 'inline-flex';
+
+      // Pindah ke pemilihan skenario
+      navigateTo('page-skenario');
+    }
+
+    // Izinkan tekan tombol Enter pada input nama
+    document.getElementById('playerNameInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        saveNameAndProceed();
+      }
+    });
+
+    // 3. OVERLAY MODALS (TENTANG & PANDUAN)
+    function openModal(modalId) {
+      const m = document.getElementById(modalId);
+      if (m) m.classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      const m = document.getElementById(modalId);
+      if (m) m.classList.remove('active');
+    }
+
+    function closeModalOnBackdrop(e, modalId) {
+      if (e.target.id === modalId) {
+        closeModal(modalId);
+      }
+    }
+
+    // 4. AUDIO CONTROLLER
     function toggleLocalMusic() {
       const audio = document.getElementById('bg-music');
-      const btn = document.getElementById('music-btn');
+      const statusText = document.getElementById('musicStatusText');
+      const eqBars = [document.getElementById('eq1'), document.getElementById('eq2'), document.getElementById('eq3')];
 
       if (audio.paused) {
         audio.play().then(() => {
-          btn.innerText = "⏸ Pause";
-        }).catch(error => {
-          alert("Gagal memutar lagu. Pastikan file 'lagu.mp3' sudah ada di folder project yang sama!");
+          statusText.innerText = "Pause";
+          eqBars.forEach(b => b && b.classList.add('active'));
+        }).catch(err => {
+          alert("Tips: Klik di halaman terlebih dahulu atau pastikan file 'assets/lagu.mp3' tersedia!");
         });
       } else {
         audio.pause();
-        btn.innerText = "▶ Play";
+        statusText.innerText = "Play";
+        eqBars.forEach(b => b && b.classList.remove('active'));
+      }
+    }
+
+    // 5. FULLSCREEN CANVAS TOGGLE
+    function toggleFullscreenCanvas() {
+      const canvas = document.getElementById('mainCanvas');
+      if (!document.fullscreenElement) {
+        if (canvas.requestFullscreen) {
+          canvas.requestFullscreen();
+        } else if (canvas.webkitRequestFullscreen) {
+          canvas.webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
       }
     }
   </script>
