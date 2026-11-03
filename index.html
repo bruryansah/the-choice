@@ -421,16 +421,9 @@
       border-radius: 10px;
     }
 
-    .img-slot .slot-label {
-      font-weight: 700;
-      color: var(--color-dark);
-      margin-top: 4px;
-      font-size: 0.72rem;
-    }
-
+    .img-slot .slot-label,
     .img-slot .slot-hint {
-      font-size: 0.65rem;
-      color: #888;
+      display: none;
     }
 
     /* =========================================================
@@ -957,7 +950,6 @@
         font-size: 1.5rem;
         align-self: center;
       }
-<<<<<<< HEAD
 
       /* FIX 3: SKENARIO & DETAIL - konten sejajarkan ulang ke tengah setelah back-btn */
       #page-skenario .scenario-header-wrap,
@@ -1078,12 +1070,6 @@
         padding: 16px 14px;
         position: relative;
         min-height: auto;
-=======
-      .center-content {
-        padding: 15px;
-        justify-content: center;
-        margin-top: 40px;
->>>>>>> b1ba4ed1d8353a8063c0394a794d6ad6369b40da
       }
     }
   </style>
@@ -1133,9 +1119,9 @@
             
             <div class="hero-right">
               <!-- PLACEHOLDER ILUSTRASI HERO -->
-              <div class="img-slot hero-illustration-box" title="Ganti dengan gambar Anda di: assets/images/hero.png">
-                <img src="assets/images/hero.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Ilustrasi Hero Karakter">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot hero-illustration-box" title="assets/images/hero.png atau assets/images/hero.jpeg">
+                <img src="assets/images/hero.png" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/hero.jpeg';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Ilustrasi Hero Karakter">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2.5rem;"></span>
                   <span class="slot-label"></span>
                 </div>
@@ -1195,12 +1181,12 @@
           <div class="scenario-grid">
             <!-- Kartu Skenario 1 -->
             <div class="scenario-card" onclick="navigateTo('page-detail-skenario-1')">
-              <div class="img-slot" title="Ganti dengan gambar Anda di: assets/images/kasus-1.png">
-                <img src="assets/images/kasus-1.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Kasus 1">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/kasus-1.jpeg">
+                <img src="assets/images/kasus-1.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/kasus-1.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Kasus 1">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2rem;"></span>
-                  <span class="slot-label">[ Kasus 1: Perundungan ]</span>
-                  <span class="slot-hint">assets/images/kasus-1.png</span>
+                  <span class="slot-label"></span>
+                  <span class="slot-hint"></span>
                 </div>
               </div>
               <div class="card-title-pill">PERUNDUNGAN DI LINGKUNGAN KAMPUS</div>
@@ -1208,12 +1194,12 @@
 
             <!-- Kartu Skenario 2 -->
             <div class="scenario-card" onclick="navigateTo('page-detail-skenario-2')">
-              <div class="img-slot" title="Ganti dengan gambar Anda di: assets/images/kasus-2.png">
-                <img src="assets/images/kasus-2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Kasus 2">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/kasus-2.jpeg">
+                <img src="assets/images/kasus-2.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/kasus-2.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Kasus 2">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2rem;"></span>
-                  <span class="slot-label">[ Kasus 2: Musyawarah ]</span>
-                  <span class="slot-hint">assets/images/kasus-2.png</span>
+                  <span class="slot-label"></span>
+                  <span class="slot-hint"></span>
                 </div>
               </div>
               <div class="card-title-pill">PERBEDAAN PENDAPAT DALAM KELOMPOK</div>
@@ -1221,12 +1207,12 @@
 
             <!-- Kartu Skenario 3 -->
             <div class="scenario-card" onclick="navigateTo('page-detail-skenario-3')">
-              <div class="img-slot" title="Ganti dengan gambar Anda di: assets/images/kasus-3.png">
-                <img src="assets/images/kasus-3.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Kasus 3">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/kasus-3.jpeg">
+                <img src="assets/images/kasus-3.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/kasus-3.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Kasus 3">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2rem;"></span>
-                  <span class="slot-label">[ Kasus 3: Cek Fakta ]</span>
-                  <span class="slot-hint">assets/images/kasus-3.png</span>
+                  <span class="slot-label"></span>
+                  <span class="slot-hint"></span>
                 </div>
               </div>
               <div class="card-title-pill">BERITA YANG BELUM TERVERIFIKASI</div>
@@ -1247,11 +1233,11 @@
 
           <div class="scenario-layout">
             <div class="narrative-card">
-              <div class="img-slot" title="Ganti dengan gambar Anda di: assets/images/adegan-1.png">
-                <img src="assets/images/adegan-1.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Adegan Perundungan">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/adegan-1.jpeg">
+                <img src="assets/images/adegan-1.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/adegan-1.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Adegan Perundungan">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 1.8rem;"></span>
-                  <span class="slot-label">[ Adegan Perundungan ]</span>
+                  <span class="slot-label"></span>
                 </div>
               </div>
               <div class="narrative-text-box">
@@ -1282,11 +1268,11 @@
           <button class="back-btn" onclick="navigateTo('page-detail-skenario-1')" title="Ulangi Pilihan">&lt;</button>
           <div class="ending-card-container">
             <div class="ending-left-panel">
-              <div class="img-slot" title="assets/images/bad-1.png">
-                <img src="assets/images/bad-1.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Bad Ending 1">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/bad-1.jpeg">
+                <img src="assets/images/bad-1.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/bad-1.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Bad Ending 1">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2rem;"></span>
-                  <span class="slot-label">[ Ilustrasi Opsi A ]</span>
+                  <span class="slot-label"></span>
                 </div>
               </div>
               <div class="ending-sila-box">
@@ -1314,11 +1300,11 @@
           <button class="back-btn" onclick="navigateTo('page-detail-skenario-1')" title="Ulangi Pilihan">&lt;</button>
           <div class="ending-card-container">
             <div class="ending-left-panel">
-              <div class="img-slot" title="assets/images/good-1.png">
-                <img src="assets/images/good-1.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Good Ending 1">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/good-1.jpeg">
+                <img src="assets/images/good-1.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/good-1.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Good Ending 1">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2rem;"></span>
-                  <span class="slot-label">[ Ilustrasi Opsi B ]</span>
+                  <span class="slot-label"></span>
                 </div>
               </div>
               <div class="ending-sila-box">
@@ -1346,11 +1332,11 @@
           <button class="back-btn" onclick="navigateTo('page-detail-skenario-1')" title="Ulangi Pilihan">&lt;</button>
           <div class="ending-card-container">
             <div class="ending-left-panel">
-              <div class="img-slot" title="assets/images/neutral-1.png">
-                <img src="assets/images/neutral-1.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Neutral Ending 1">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/neutral-1.jpeg">
+                <img src="assets/images/neutral-1.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/neutral-1.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Neutral Ending 1">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2rem;"></span>
-                  <span class="slot-label">[ Ilustrasi Opsi C ]</span>
+                  <span class="slot-label"></span>
                 </div>
               </div>
               <div class="ending-sila-box">
@@ -1384,11 +1370,11 @@
 
           <div class="scenario-layout">
             <div class="narrative-card">
-              <div class="img-slot" title="assets/images/adegan-2.png">
-                <img src="assets/images/adegan-2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Adegan Diskusi">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/adegan-2.jpeg">
+                <img src="assets/images/adegan-2.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/adegan-2.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Adegan Diskusi">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 1.8rem;"></span>
-                  <span class="slot-label">[ Adegan Diskusi Kelompok ]</span>
+                  <span class="slot-label"></span>
                 </div>
               </div>
               <div class="narrative-text-box">
@@ -1419,11 +1405,11 @@
           <button class="back-btn" onclick="navigateTo('page-detail-skenario-2')" title="Ulangi Pilihan">&lt;</button>
           <div class="ending-card-container">
             <div class="ending-left-panel">
-              <div class="img-slot" title="assets/images/neutral-2.png">
-                <img src="assets/images/neutral-2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Neutral Ending 2">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/neutral-2.jpeg">
+                <img src="assets/images/neutral-2.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/neutral-2.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Neutral Ending 2">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2rem;"></span>
-                  <span class="slot-label">[ Ilustrasi Opsi A ]</span>
+                  <span class="slot-label"></span>
                 </div>
               </div>
               <div class="ending-sila-box">
@@ -1451,11 +1437,11 @@
           <button class="back-btn" onclick="navigateTo('page-detail-skenario-2')" title="Ulangi Pilihan">&lt;</button>
           <div class="ending-card-container">
             <div class="ending-left-panel">
-              <div class="img-slot" title="assets/images/good-2.png">
-                <img src="assets/images/good-2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Good Ending 2">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/good-2.jpeg">
+                <img src="assets/images/good-2.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/good-2.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Good Ending 2">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2rem;"></span>
-                  <span class="slot-label">[ Ilustrasi Opsi B ]</span>
+                  <span class="slot-label"></span>
                 </div>
               </div>
               <div class="ending-sila-box">
@@ -1483,11 +1469,11 @@
           <button class="back-btn" onclick="navigateTo('page-detail-skenario-2')" title="Ulangi Pilihan">&lt;</button>
           <div class="ending-card-container">
             <div class="ending-left-panel">
-              <div class="img-slot" title="assets/images/bad-2.png">
-                <img src="assets/images/bad-2.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Bad Ending 2">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/bad-2.jpeg">
+                <img src="assets/images/bad-2.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/bad-2.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Bad Ending 2">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2rem;"></span>
-                  <span class="slot-label">[ Ilustrasi Opsi C ]</span>
+                  <span class="slot-label"></span>
                 </div>
               </div>
               <div class="ending-sila-box">
@@ -1521,11 +1507,11 @@
 
           <div class="scenario-layout">
             <div class="narrative-card">
-              <div class="img-slot" title="assets/images/adegan-3.png">
-                <img src="assets/images/adegan-3.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Adegan Pesan Berantai">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/adegan-3.jpeg">
+                <img src="assets/images/adegan-3.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/adegan-3.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Adegan Pesan Berantai">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 1.8rem;"></span>
-                  <span class="slot-label">[ Adegan Pesan Berantai ]</span>
+                  <span class="slot-label"></span>
                 </div>
               </div>
               <div class="narrative-text-box">
@@ -1556,11 +1542,11 @@
           <button class="back-btn" onclick="navigateTo('page-detail-skenario-3')" title="Ulangi Pilihan">&lt;</button>
           <div class="ending-card-container">
             <div class="ending-left-panel">
-              <div class="img-slot" title="assets/images/bad-3.png">
-                <img src="assets/images/bad-3.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Bad Ending 3">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/bad-3.jpeg">
+                <img src="assets/images/bad-3.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/bad-3.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Bad Ending 3">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2rem;"></span>
-                  <span class="slot-label">[ Ilustrasi Opsi A ]</span>
+                  <span class="slot-label"></span>
                 </div>
               </div>
               <div class="ending-sila-box">
@@ -1588,11 +1574,11 @@
           <button class="back-btn" onclick="navigateTo('page-detail-skenario-3')" title="Ulangi Pilihan">&lt;</button>
           <div class="ending-card-container">
             <div class="ending-left-panel">
-              <div class="img-slot" title="assets/images/good-3.png">
-                <img src="assets/images/good-3.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Good Ending 3">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/good-3.jpeg">
+                <img src="assets/images/good-3.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/good-3.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Good Ending 3">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2rem;"></span>
-                  <span class="slot-label">[ Ilustrasi Opsi B ]</span>
+                  <span class="slot-label"></span>
                 </div>
               </div>
               <div class="ending-sila-box">
@@ -1620,11 +1606,11 @@
           <button class="back-btn" onclick="navigateTo('page-detail-skenario-3')" title="Ulangi Pilihan">&lt;</button>
           <div class="ending-card-container">
             <div class="ending-left-panel">
-              <div class="img-slot" title="assets/images/neutral-3.png">
-                <img src="assets/images/neutral-3.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" alt="Neutral Ending 3">
-                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+              <div class="img-slot" title="assets/images/neutral-3.jpeg">
+                <img src="assets/images/neutral-3.jpeg" onerror="if(!this.dataset.fallback){this.dataset.fallback=1; this.src='assets/images/neutral-3.png';}else{this.style.display='none'; this.nextElementSibling.style.display='flex';}" alt="Neutral Ending 3">
+                <div style="display: none; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                   <span style="font-size: 2rem;"></span>
-                  <span class="slot-label">[ Ilustrasi Opsi C ]</span>
+                  <span class="slot-label"></span>
                 </div>
               </div>
               <div class="ending-sila-box">
